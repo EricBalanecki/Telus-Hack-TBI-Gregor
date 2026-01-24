@@ -2,6 +2,13 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 type GazePoint = {
   x: number;
@@ -129,6 +136,24 @@ export default function ExercisesPage() {
     canvas.height = window.innerHeight;
   }, []);
 
+  const exercises = [
+    {
+      id: "level-1-visual-tracking",
+      title: "Level 1: Visual Tracking",
+      difficulty: "Easy",
+      imageLabel: "Visual tracking paths",
+      parts: [
+        "Follow the Dot (horizontal)",
+        "Follow the Dot (vertical)",
+        "Circle Path",
+      ],
+      scoring:
+        "Score is based on the % of gaze samples near the moving dot and how well you keep pace.",
+      futureNote:
+        "Speed and accuracy reporting will be handled by the backend in a future update.",
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
       <canvas
@@ -137,7 +162,7 @@ export default function ExercisesPage() {
         className="pointer-events-none fixed inset-0 z-0"
         aria-hidden="true"
       />
-      <main className="mx-auto flex min-h-screen w-full max-w-3xl flex-col items-center justify-center gap-6 px-6 text-center">
+      <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-6 px-6 py-12 text-left">
         <h1 className="text-3xl font-semibold tracking-tight">
           Eye Exercises
         </h1>
@@ -145,10 +170,10 @@ export default function ExercisesPage() {
           Follow the exercises below. The gaze dot is active here, but clicking
           does not change calibration.
         </p>
-        <span className="rounded-full bg-zinc-800 px-4 py-2 text-sm text-zinc-200">
+        <span className="w-fit rounded-full bg-zinc-800 px-4 py-2 text-sm text-zinc-200">
           {status}
         </span>
-        <div className="flex flex-col items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <Link
             className="rounded-full border border-zinc-600 px-5 py-2 text-sm font-semibold text-white"
             href="/"
@@ -164,6 +189,39 @@ export default function ExercisesPage() {
             </Link>
           )}
         </div>
+        <section className="grid gap-4 md:grid-cols-2">
+          {exercises.map((exercise) => (
+            <Card key={exercise.id} className="border-zinc-800 bg-zinc-900/60">
+              <CardHeader>
+                <div className="flex items-start justify-between gap-4">
+                  <CardTitle className="text-xl text-white">
+                    {exercise.title}
+                  </CardTitle>
+                  <span className="rounded-full bg-emerald-400/20 px-3 py-1 text-xs font-semibold text-emerald-200">
+                    {exercise.difficulty}
+                  </span>
+                </div>
+                <CardDescription className="text-zinc-300">
+                  {exercise.scoring}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="flex h-32 items-center justify-center rounded-lg border border-dashed border-zinc-700 bg-zinc-950/50 text-sm text-zinc-400">
+                  {exercise.imageLabel}
+                </div>
+                <div className="space-y-2 text-sm text-zinc-200">
+                  <p className="font-semibold text-white">Parts</p>
+                  <ul className="list-disc space-y-1 pl-5 text-zinc-300">
+                    {exercise.parts.map((part) => (
+                      <li key={part}>{part}</li>
+                    ))}
+                  </ul>
+                </div>
+                <p className="text-xs text-zinc-400">{exercise.futureNote}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </section>
       </main>
 
       {smoothedGazePoint && (
