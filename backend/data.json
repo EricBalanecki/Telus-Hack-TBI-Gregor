@@ -1,0 +1,15 @@
+{
+  "records": [
+    {
+      "date": "2026-01-24",
+      "exercise": "eye-tracker",
+      "notes": "slow"
+    },
+    {
+      "date": "2026-01-24",
+      "exercise": "hand-eye",
+      "notes": "gregor"
+    }
+  ],
+  "progress": 0
+}
