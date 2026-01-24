@@ -1,65 +1,170 @@
-import Image from "next/image";
+"use client";
+
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+
+type GazePoint = {
+  x: number;
+  y: number;
+};
+
+type WebGazer = {
+  setRegression: (name: string) => WebGazer;
+  setGazeListener: (
+    callback: (data: GazePoint | null, elapsedTime?: number) => void,
+  ) => WebGazer;
+  saveDataAcrossSessions: (value: boolean) => WebGazer;
+  begin: () => Promise<void> | void;
+  end: () => void;
+  showVideoPreview: (show: boolean) => WebGazer;
+  showPredictionPoints: (show: boolean) => WebGazer;
+  applyKalmanFilter: (enabled: boolean) => WebGazer;
+  getStoredPoints: () => [number[], number[]];
+  removeMouseEventListeners: () => void;
+};
+
+const SMOOTHING_ALPHA = 0.15;
+
+const smoothEMA = (
+  prev: GazePoint | null,
+  next: GazePoint,
+  alpha = SMOOTHING_ALPHA,
+) => {
+  if (!prev) {
+    return next;
+  }
+  return {
+    x: prev.x + alpha * (next.x - prev.x),
+    y: prev.y + alpha * (next.y - prev.y),
+  };
+};
+
+const clampToViewport = (point: GazePoint) => {
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  return {
+    left: Math.min(Math.max(point.x, 0), width),
+    top: Math.min(Math.max(point.y, 0), height),
+  };
+};
 
 export default function Home() {
+  const [smoothedGazePoint, setSmoothedGazePoint] =
+    useState<GazePoint | null>(null);
+  const [isWebgazerReady, setIsWebgazerReady] = useState(false);
+  const [hasSavedCalibration, setHasSavedCalibration] = useState(false);
+  const [status, setStatus] = useState("Initializing eye tracker...");
+
+  const webgazerRef = useRef<WebGazer | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const setupWebgazer = async () => {
+      try {
+        const { default: webgazer } = await import("webgazer");
+
+        if (!isMounted) {
+          return;
+        }
+
+        const instance = webgazer as WebGazer;
+        webgazerRef.current = instance;
+
+        instance
+          .setRegression("ridge")
+          .setGazeListener((data: GazePoint | null) => {
+            if (!data || !isMounted) {
+              return;
+            }
+            const nextPoint = { x: data.x, y: data.y };
+            setSmoothedGazePoint((prev) => smoothEMA(prev, nextPoint));
+          })
+          .saveDataAcrossSessions(true);
+
+        await instance.begin();
+        instance
+          .showVideoPreview(false)
+          .showPredictionPoints(false)
+          .applyKalmanFilter(true);
+
+        instance.removeMouseEventListeners();
+
+        const stored = instance.getStoredPoints();
+        const hasStoredData = stored[0].length > 0 && stored[1].length > 0;
+
+        if (!isMounted) {
+          return;
+        }
+        setHasSavedCalibration(hasStoredData);
+        setIsWebgazerReady(true);
+        setStatus(
+          hasStoredData
+            ? "Calibration loaded. Tracking gaze."
+            : "No calibration found. Please calibrate from the button below.",
+        );
+      } catch (error) {
+        console.error("Failed to initialize webgazer", error);
+        setStatus("Unable to start eye tracking.");
+      }
+    };
+
+    setupWebgazer();
+
+    return () => {
+      isMounted = false;
+      if (webgazerRef.current) {
+        webgazerRef.current.end();
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) {
+      return;
+    }
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }, []);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="relative min-h-screen bg-zinc-950 text-white">
+      <canvas
+        ref={canvasRef}
+        id="plotting_canvas"
+        className="pointer-events-none fixed inset-0 z-0"
+        aria-hidden="true"
+      />
+      <main className="flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center">
+        <h1 className="text-3xl font-semibold tracking-tight">
+          Webgazer Home
+        </h1>
+        <p className="max-w-xl text-base text-zinc-300">
+          Allow camera access to start gaze tracking. Calibration is only
+          available on the calibration page.
+        </p>
+        <span className="rounded-full bg-zinc-800 px-4 py-2 text-sm text-zinc-200">
+          {status}
+        </span>
+        {isWebgazerReady && (
+          <Link
+            className="rounded-full bg-emerald-500 px-5 py-2 text-sm font-semibold text-black"
+            href="/calibration"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+            {hasSavedCalibration ? "Recalibrate" : "Calibrate"}
+          </Link>
+        )}
       </main>
+
+      {smoothedGazePoint && (
+        <div
+          className="pointer-events-none fixed h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]"
+          style={clampToViewport(smoothedGazePoint)}
+          aria-hidden="true"
+        />
+      )}
     </div>
   );
 }
