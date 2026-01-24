@@ -11,11 +11,11 @@ def get_user(user_id: str):
 @app.post("/mcp")
 async def mcp_endpoint(request: Request):
     body = await request.json()
-    # Manually parse MCP message
-    # Here we only implement a single "get_user" tool
     tool_name = body.get("tool")
     args = body.get("args", {})
     
+    print(f"Got MCP request: {tool_name}")
+
     if tool_name == "get_message":
         return {"result": {"message": "we love gregor"}}
     else:
