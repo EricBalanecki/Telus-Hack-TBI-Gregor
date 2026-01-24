@@ -20,10 +20,6 @@ def write_db(data):
         json.dump(data, f, indent=2)
 
 
-# ------------------------
-# Records functions
-# ------------------------
-
 def add_record(record: dict):
     """
     Add a new record.
@@ -38,21 +34,3 @@ def add_record(record: dict):
 def get_records():
     db = read_db()
     return db["records"]
-
-
-# ------------------------
-# Progress functions
-# ------------------------
-
-def set_progress(value: int):
-    if not (0 <= value <= 100):
-        raise ValueError("Progress must be between 0 and 100")
-    db = read_db()
-    db["progress"] = value
-    write_db(db)
-    return db["progress"]
-
-
-def get_progress():
-    db = read_db()
-    return db["progress"]

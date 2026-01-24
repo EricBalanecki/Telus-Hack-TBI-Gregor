@@ -1,8 +1,17 @@
-from fastapi import FastAPI, Request, HTTPException
+from fastapi import FastAPI, Request
 from pydantic import BaseModel
-from json_service import add_record, get_records, set_progress, get_progress
+from json_service import add_record, get_records
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # REST API
 @app.get("/api/users/{user_id}")
@@ -41,20 +50,3 @@ def read_records():
 @app.post("/records")
 def create_record(record: Record):
     return add_record(record.model_dump())
-
-# progress endpoints
-class Progress(BaseModel):
-    value: int
-
-@app.get("/progress")
-def read_progress():
-    return {"progress": get_progress()}
-
-
-@app.post("/progress")
-def update_progress(progress: Progress):
-    try:
-        value = set_progress(progress.value)
-        return {"progress": value}
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
