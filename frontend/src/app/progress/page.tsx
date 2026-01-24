@@ -19,35 +19,67 @@ export default function ProgressPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white p-8 font-sans text-gray-900">
+    <div className="relative min-h-screen bg-zinc-950 text-white">
+      <main className="flex min-h-screen flex-col items-center justify-center gap-6 px-6 text-center">
 
-      <div className="bg-gray-50 rounded-lg shadow p-6">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-800">Exercise Records</h2>
-        {records.length === 0 ? (
-          <p className="text-gray-700">No records yet.</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full table-auto border-collapse border border-gray-300">
-              <thead>
-                <tr className="bg-gray-200">
-                  <th className="border border-gray-300 px-4 py-2 text-left text-gray-800">Date</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left text-gray-800">Exercise</th>
-                  <th className="border border-gray-300 px-4 py-2 text-left text-gray-800">Notes</th>
-                </tr>
-              </thead>
-              <tbody>
-                {records.map((r, idx) => (
-                  <tr key={idx} className={idx % 2 === 0 ? "bg-white" : "bg-gray-100"}>
-                    <td className="border border-gray-300 px-4 py-2">{r.date}</td>
-                    <td className="border border-gray-300 px-4 py-2">{r.exercise}</td>
-                    <td className="border border-gray-300 px-4 py-2">{r.notes}</td>
+        {/* Title */}
+        <h1 className="text-3xl font-semibold tracking-tight">
+          Exercise Records
+        </h1>
+
+        {/* Subtitle */}
+        <p className="max-w-xl text-base text-zinc-300">
+          View your past eye exercise sessions and notes.
+        </p>
+
+        {/* Content Card */}
+        <div className="w-full max-w-4xl rounded-lg border border-zinc-800 bg-zinc-900 p-6">
+
+          {records.length === 0 ? (
+            <p className="text-zinc-400">No records yet.</p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full table-auto border-collapse">
+
+                <thead>
+                  <tr className="border-b text-left border-zinc-700">
+                    <th className="px-4 py-2 text-sm font-semibold text-zinc-300">
+                      Date
+                    </th>
+                    <th className="px-4 py-2 text-sm font-semibold text-zinc-300">
+                      Exercise
+                    </th>
+                    <th className="px-4 py-2 text-sm font-semibold text-zinc-300">
+                      Notes
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+                </thead>
+
+                <tbody>
+                  {records.map((r, idx) => (
+                    <tr
+                      key={idx}
+                      className="border-b text-left border-zinc-800 hover:bg-zinc-800/50 transition"
+                    >
+                      <td className="px-4 py-2 text-sm text-white">
+                        {r.date}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-white">
+                        {r.exercise}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-zinc-300">
+                        {r.notes}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+
+              </table>
+            </div>
+          )}
+
+        </div>
+      </main>
     </div>
   );
 }

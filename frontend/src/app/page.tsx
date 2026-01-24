@@ -13,6 +13,12 @@ export default function Home() {
         </p>
         <div className="flex flex-col items-center gap-3">
           <Link
+            className="rounded-full border border-zinc-600 px-5 py-2 text-sm font-semibold text-white"
+            href="/progress"
+          >
+            Session History
+          </Link>
+          <Link
             className="rounded-full bg-emerald-500 px-5 py-2 text-sm font-semibold text-black"
             href="/exercises"
           >
