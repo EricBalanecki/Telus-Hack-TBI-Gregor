@@ -20,7 +20,7 @@ def call_llm(prompt):
     response = client.completions.create(
         model=MODEL_NAME,
         prompt=prompt,
-        max_tokens=200,
+        max_tokens=1500,
         temperature=0.2
     )
 

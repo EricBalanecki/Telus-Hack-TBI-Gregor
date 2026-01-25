@@ -1,4 +1,20 @@
 EXERCISES = [
+    # Level 1 – Motor Control
+    {
+        "exercise": "Level 1 – Motor Control",
+        "description": (
+            "Early rehab, low fatigue. "
+            "Instructions: Pop the ballons with the laser"
+            "Purpose: rebuilds motor control, very low cognitive load."
+        ),
+        "dot_size": False,
+        "speed": False,
+        "rest_time": False,
+        "target_size": True,
+        "num_targets": True, 
+        "days": True,
+    },
+
     # Level 1 – Basic Visual Tracking
     {
         "exercise": "Level 1 – Basic Visual Tracking",
@@ -11,7 +27,10 @@ EXERCISES = [
         ),
         "dot_size": True,
         "speed": True,
-        "rest_time": True
+        "rest_time": True,
+        "target_size": False,
+        "num_targets": False,
+        "days": True,
     },
 
     # Level 2 – Direction & Accuracy
@@ -25,7 +44,10 @@ EXERCISES = [
         ),
         "dot_size": True,
         "speed": True,
-        "rest_time": True
+        "rest_time": True,
+        "target_size": False,
+        "num_targets": False, 
+        "days": True,
     },
 
     # Level 3 – Distractors & Control
@@ -39,7 +61,10 @@ EXERCISES = [
         ),
         "dot_size": True,
         "speed": True,
-        "rest_time": True
+        "rest_time": True,
+        "target_size": False,
+        "num_targets": False, 
+        "days": True,
     },
 
     # Level 4 – Eye + Reaction
@@ -53,7 +78,10 @@ EXERCISES = [
         ),
         "dot_size": True,
         "speed": True,
-        "rest_time": True
+        "rest_time": True,
+        "target_size": False,
+        "num_targets": False, 
+        "days": True,
     },
 
     # Level 5 – Eye + Thinking
@@ -67,7 +95,10 @@ EXERCISES = [
         ),
         "dot_size": True,
         "speed": True,
-        "rest_time": True
+        "rest_time": True,
+        "target_size": False,
+        "num_targets": False, 
+        "days": True,
     },
 
     # Level 6 – Functional (advanced)
@@ -81,7 +112,10 @@ EXERCISES = [
         ),
         "dot_size": True,
         "speed": True,
-        "rest_time": True
+        "rest_time": True,
+        "target_size": False,
+        "num_targets": False, 
+        "days": True,
     }
 ]
 

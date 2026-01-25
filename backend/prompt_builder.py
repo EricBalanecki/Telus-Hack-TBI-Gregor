@@ -5,13 +5,13 @@ from exercises import EXERCISES
 def build_base_exercise_prompt(input: BaseInput):
     """
     Builds a prompt that:
-    1. Chooses the most appropriate exercise based on motor/visual levels and descriptions.
+    1. Chooses the most appropriate exercises based on motor/visual levels and descriptions.
     2. Fills numeric fields for the chosen exercise.
-    Returns ONLY the JSON of the selected exercise.
+    Returns ONLY the JSON ARRAY of the selected exercises.
     """
 
     return f"""
-You are helping select and configure a therapy exercise for a user in TBI rehab.
+You are helping select and configure an 8-week therapy exercise plan for a user in TBI rehab.
 
 Motor skill level: {input.motor_level} (1 = easiest, 10 = hardest)
 Visual skill level: {input.visual_level} (1 = easiest, 10 = hardest)
@@ -22,12 +22,41 @@ You are given a list of exercises. Each exercise has placeholders for numeric fi
 - "dot_size": True = fill with a number from 1 (smallest) to 3 (largest), False = null
 - "speed": True = fill with a number from 1 (slowest) to 3 (fastest), False = null
 - "rest_time": True = fill with a number from 5 to 30 seconds (easy = more rest time), False = null
+- "target_size": True = fill with a number from 0.5 (smallest) to 3 (largest), False = null
+- "num_targets": True = fill with a number from 5 (least) to 20 (most), False = null
+- "days": True = fill with a number from 1 to 7 days (easy = less days), False = null
 
-Step 1: Choose the ONE exercise that best matches the user's skill levels and descriptions.
-Step 2: Fill in the numeric values for the chosen exercise only. Leave False fields as null.
+Steps:
+1. Select exactly 8 exercises that form a progressive 8-week plan.
+2. Start easy and gradually increase difficulty.
+3. Replace True values with appropriate numbers.
+4. Replace False values with null.
 
-Return ONLY the JSON object for the selected exercise.
-Do not include extra text, explanation, or punctuation.
+CRITICAL OUTPUT RULES:
+
+- Return ONLY a JSON ARRAY
+- The top-level output MUST start with [ and end with ]
+- Each item in the array must be a JSON object
+- No markdown
+- No backticks
+- No explanation
+- No extra text
+
+Example output shape:
+
+[
+  {{
+    "exercise": "Example Exercise",
+    "description": "Example description",
+    "dot_size": 2,
+    "speed": 1,
+    "rest_time": 20,
+    "target_size": null,
+    "num_targets": null,
+    "days": 3
+  }},
+  ...
+]
 
 Exercise options (full JSON list):
 {json.dumps(EXERCISES, indent=2)}
