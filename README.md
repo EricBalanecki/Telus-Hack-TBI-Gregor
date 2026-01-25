@@ -22,6 +22,19 @@ Frontend
 - `npm i`
 - `npm run dev`
 
-Backend
+## Tech Stack
+
+Frontend (TypeScript)
+- Next.js
+- React
+- Web Bluetooth
+	- Accessibility remote
+	- Heart rate monitoring
+- Web Viewer
+- Three.js
+
+Backend (Python)
 - Deployed on Railway
 - Run with Uvicorn
+- OpenAI
+- FastAPI
