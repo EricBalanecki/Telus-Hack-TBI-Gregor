@@ -93,7 +93,7 @@ export default function WorkoutPlanPage() {
   );
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white">
+    <div className="min-h-screen text-white">
       <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-10 px-6 py-12">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
