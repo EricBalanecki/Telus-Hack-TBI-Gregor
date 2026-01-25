@@ -56,8 +56,9 @@ const clampToViewport = (point: GazePoint) => {
 };
 
 export default function ExercisesPage() {
-  const [smoothedGazePoint, setSmoothedGazePoint] =
-    useState<GazePoint | null>(null);
+  const [smoothedGazePoint, setSmoothedGazePoint] = useState<GazePoint | null>(
+    null,
+  );
   const [isWebgazerReady, setIsWebgazerReady] = useState(false);
   const [hasSavedCalibration, setHasSavedCalibration] = useState(false);
   const [status, setStatus] = useState("Initializing eye tracker...");
@@ -160,12 +161,8 @@ export default function ExercisesPage() {
         aria-hidden="true"
       />
       <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-6 px-6 py-12 text-left">
-        <h1 className="text-3xl font-semibold tracking-tight">
-          Eye Exercises
-        </h1>
-        <p className="text-base text-zinc-300">
-          Follow the exercises below. 
-        </p>
+        <h1 className="text-3xl font-semibold tracking-tight">Eye Exercises</h1>
+        <p className="text-base text-zinc-300">Follow the exercises below.</p>
         <span className="w-fit rounded-full bg-zinc-800 px-4 py-2 text-sm text-zinc-200">
           {status}
         </span>
@@ -187,11 +184,7 @@ export default function ExercisesPage() {
         </div>
         <section className="grid gap-4 md:grid-cols-2">
           {exercises.map((exercise) => (
-            <Link
-              key={exercise.id}
-              href={exercise.href}
-              className="block"
-            >
+            <Link key={exercise.id} href={exercise.href} className="block">
               <Card className="border-zinc-800 bg-zinc-900/60 transition hover:border-emerald-400/60 hover:bg-zinc-900">
                 <CardHeader>
                   <div className="flex items-start justify-between gap-4">
