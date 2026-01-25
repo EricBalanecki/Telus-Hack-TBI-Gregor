@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import HeartRateOverlay from "@/components/heart-rate-overlay";
+import AppShell from "@/components/app-shell";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -24,13 +24,12 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en">
-			<body
-				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-			>
-        <HeartRateOverlay />
-				{children}
-			</body>
-		</html>
+    <html lang="en">
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
+        <AppShell>{children}</AppShell>
+      </body>
+    </html>
 	);
 }

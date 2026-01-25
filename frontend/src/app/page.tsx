@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="relative min-h-screen bg-zinc-950 text-white">
+    <div className="relative min-h-screen text-white">
       <main className="flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center">
         <h1 className="text-3xl font-semibold tracking-tight">Webgazer Home</h1>
         <p className="max-w-xl text-base text-zinc-300">

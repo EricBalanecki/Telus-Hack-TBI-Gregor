@@ -258,6 +258,9 @@ export default function HeartRateOverlay({
   }, [disconnect, lastDeviceName]);
 
   const startCalibration = useCallback(() => {
+    if (status !== "Connected") {
+      return;
+    }
     setRestingRate(null);
     restingRateRef.current = null;
     setShowBreakAlert(false);
@@ -294,7 +297,7 @@ export default function HeartRateOverlay({
         return prev - 1;
       });
     }, 1000);
-  }, []);
+  }, [status]);
 
   useEffect(() => {
     if (!enabled) {
@@ -400,13 +403,6 @@ export default function HeartRateOverlay({
             >
               {status === "Connected" ? "Reconnect" : "Connect"}
             </button>
-            <button
-              className="rounded-full border border-zinc-700 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-zinc-200 hover:border-emerald-400 hover:text-emerald-200"
-              onClick={reconnectLastDevice}
-              type="button"
-            >
-              Last
-            </button>
           </div>
         </div>
         <div className="mt-1 text-xs text-zinc-400">{status}</div>
@@ -420,7 +416,7 @@ export default function HeartRateOverlay({
             Last device: {lastDeviceName}
           </div>
         )}
-        {!isCalibrating && (
+        {!isCalibrating && status === "Connected" && (
           <button
             className="mt-2 w-full rounded-full border border-zinc-700 px-3 py-1 text-xs text-zinc-100 hover:border-emerald-400 hover:text-emerald-200"
             onClick={startCalibration}
