@@ -14,6 +14,7 @@ type NavLink = {
 const navLinks: NavLink[] = [
   { path: "/", label: "Home" },
   { path: "/exercises", label: "Exercises" },
+  { path: "/coach", label: "Coach" },
   { path: "/workout-plan", label: "Workout Plan" },
   { path: "/progress", label: "Session History" },
 ];
