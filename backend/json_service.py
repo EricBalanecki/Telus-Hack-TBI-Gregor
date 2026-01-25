@@ -23,7 +23,7 @@ def write_db(data):
 def add_record(record: dict):
     """
     Add a new record.
-    record should be a dict with keys: 'date', 'exercise', 'notes'
+    record should be a dict with keys: 'date', 'exercise', 'score', 'notes'
     """
     db = read_db()
     db["records"].append(record)
