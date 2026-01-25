@@ -9,6 +9,8 @@ class RecordInput(BaseModel):
 class BaseInput(BaseModel):
     motor_level: int
     visual_level: int
+    dizzy_tracking_movement: bool
+    tired_using_screens: bool
 
 class NotesInput(BaseModel):
     exercise: str
