@@ -1,10 +1,11 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 
-from exercises import EXERCISES
-from schemas import BaseInput, RecordInput
-from llm_client import get_base_exercise
+from schemas import BaseInput, NotesInput, RecordInput
+from llm_client import get_base_exercise, get_notes
 from json_service import add_record, get_records
+import json
 
 
 app = FastAPI()
@@ -38,15 +39,31 @@ async def mcp_endpoint(request: Request):
     
 @app.post("/base-exercise")
 def generate_exercise(data: BaseInput):
-    name = get_base_exercise(data)
+    result = get_base_exercise(data)
 
-    if name not in EXERCISES:
-        return {
-            "error": "Unknown exercise returned by model",
-            "model_output": name
-        }
+    try:
+        # Attempt to parse the LLM response as JSON
+        result_json = json.loads(result)
+    except json.JSONDecodeError:
+        # If parsing fails, return an error with the raw text
+        return JSONResponse(
+            status_code=500,
+            content={
+                "error": "Model did not return valid JSON",
+                "raw": result
+            }
+        )
 
-    return EXERCISES[name]
+    # Successfully parsed JSON
+    return result_json
+
+@app.post("/notes")
+def generate_notes(data: NotesInput):
+    result = get_notes(data)
+    return {
+        "notes": result
+    }
+
     
 @app.get("/records")
 def read_records():
