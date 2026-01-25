@@ -92,6 +92,44 @@ export default function WorkoutPlanPage() {
     </button>
   );
 
+  const submit = async () => {
+  // Build request payload
+  const payload = {
+    motor_level: motorSkillsLevel[0],
+    visual_level: visualTrackingLevel[0],
+    dizzy_tracking_movement: dizzyTracking === "yes",
+    tired_using_screens: screenFatigue === "yes",
+  };
+
+  try {
+    const res = await fetch("http://localhost:8000/base-exercise", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      console.error("Failed to get exercise data");
+      return;
+    }
+
+    const exerciseData = await res.json();
+
+    console.log(exerciseData)
+
+    // Store it temporarily so /workout-plan/plan can access it
+    localStorage.setItem("exerciseData", JSON.stringify(exerciseData));
+
+    // Navigate to workout plan page
+    window.location.href = "/workout-plan/plan";
+  } catch (err) {
+    console.error("Error submitting form:", err);
+  }
+};
+
+
   return (
     <div className="min-h-screen text-white">
       <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-10 px-6 py-12">
@@ -308,12 +346,12 @@ export default function WorkoutPlanPage() {
         </section>
 
         <div className="flex justify-end">
-          <Link
+          <button
             className="rounded-full bg-emerald-500 px-6 py-2 text-sm font-semibold text-black"
-            href="/workout-plan/plan"
+            onClick={submit}
           >
             Submit
-          </Link>
+          </button>
         </div>
       </main>
     </div>
