@@ -1,17 +1,20 @@
 from openai import OpenAI
 import os
+from dotenv import load_dotenv
 
 from schemas import BaseInput, NotesInput
 from prompt_builder import build_base_exercise_prompt, build_notes_prompt
 
-API_KEY = os.getenv("API_KEY")
-if not API_KEY:
-    raise RuntimeError("API_KEY not set")
+load_dotenv()
+
+GEMMA_API_KEY = os.getenv("GEMMA_API_KEY")
+if not GEMMA_API_KEY:
+    raise RuntimeError("GEMMA_API_KEY not set")
 
 MODEL_NAME = "google/gemma-3-27b-it"
 BASE_URL = "https://gemma-3-27b-3ca9s.paas.ai.telus.com/v1"
 
-client = OpenAI(api_key="dc8704d41888afb2b889a8ebac81d12f", base_url=BASE_URL)
+client = OpenAI(api_key=GEMMA_API_KEY, base_url=BASE_URL)
 
 def call_llm(prompt):
     response = client.completions.create(
