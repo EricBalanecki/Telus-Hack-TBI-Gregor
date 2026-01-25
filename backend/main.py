@@ -48,16 +48,39 @@ async def mcp_endpoint(request: Request):
 @app.post("/plan")
 def generate_plan(data: BaseInput):
     result = get_plan(data)
+    result_json = None
+
+    def extract_json_array(text: str):
+        start = text.find("[")
+        end = text.rfind("]")
+        if start == -1 or end == -1 or end <= start:
+            return None
+        candidate = text[start : end + 1]
+        try:
+            return json.loads(candidate)
+        except json.JSONDecodeError:
+            return None
 
     try:
         # Attempt to parse the LLM response as JSON
         result_json = json.loads(result)
     except json.JSONDecodeError:
-        # If parsing fails, return an error with the raw text
+        result_json = extract_json_array(result)
+        if result_json is None:
+            # If parsing fails, return an error with the raw text
+            return JSONResponse(
+                status_code=500,
+                content={
+                    "error": "Model did not return valid JSON",
+                    "raw": result
+                }
+            )
+
+    if not isinstance(result_json, list):
         return JSONResponse(
             status_code=500,
             content={
-                "error": "Model did not return valid JSON",
+                "error": "Model did not return a JSON array",
                 "raw": result
             }
         )

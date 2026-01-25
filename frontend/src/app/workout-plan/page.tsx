@@ -181,29 +181,28 @@ export default function WorkoutPlanPage() {
   }, []);
 
   const submit = async () => {
-  // Build request payload
-  const payload: PlanInput = {
-    motor_level: motorSkillsLevel[0],
-    visual_level: visualTrackingLevel[0],
-    dizzy_tracking_movement: dizzyTracking === "yes",
-    tired_using_screens: screenFatigue === "yes",
+    // Build request payload
+    const payload: PlanInput = {
+      motor_level: motorSkillsLevel[0],
+      visual_level: visualTrackingLevel[0],
+      dizzy_tracking_movement: dizzyTracking === "yes",
+      tired_using_screens: screenFatigue === "yes",
+    };
+
+    try {
+      setIsSubmitting(true);
+      setPlanError(null);
+      const exerciseData = await createPlan(payload);
+      setPlan(exerciseData);
+      setCompletions({});
+      setShowSurvey(false);
+    } catch (err) {
+      console.error("Error submitting form:", err);
+      setPlanError("We could not generate a plan. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
-
-  try {
-    setIsSubmitting(true);
-    setPlanError(null);
-    const exerciseData = await createPlan(payload);
-    setPlan(exerciseData);
-    setCompletions({});
-    setShowSurvey(false);
-  } catch (err) {
-    console.error("Error submitting form:", err);
-    setPlanError("We could not generate a plan. Please try again.");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
-
 
   return (
     <div className="min-h-screen text-white">
@@ -233,216 +232,220 @@ export default function WorkoutPlanPage() {
           </section>
         ) : showSurvey ? (
           <>
-        <section className="space-y-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
-          <div className="space-y-2">
-            <h2 className="text-lg font-semibold text-white">
-              Visual & Motor Levels
-            </h2>
-            <p className="text-sm text-zinc-400">
-              Rate your current comfort level from 1–10.
-            </p>
-          </div>
-          <div className="space-y-4">
-            <div>
-              <div className="flex items-center justify-between text-sm text-zinc-200">
-                <span>Visual tracking</span>
-                <span className="text-emerald-200">
-                  {visualTrackingLevel[0]}
-                </span>
+            <section className="space-y-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
+              <div className="space-y-2">
+                <h2 className="text-lg font-semibold text-white">
+                  Visual & Motor Levels
+                </h2>
+                <p className="text-sm text-zinc-400">
+                  Rate your current comfort level from 1–10.
+                </p>
               </div>
-              <Slider
-                className="mt-2"
-                min={1}
-                max={10}
-                step={1}
-                value={visualTrackingLevel}
-                onValueChange={setVisualTrackingLevel}
-              />
-            </div>
-            <div>
-              <div className="flex items-center justify-between text-sm text-zinc-200">
-                <span>Motor skills</span>
-                <span className="text-emerald-200">{motorSkillsLevel[0]}</span>
+              <div className="space-y-4">
+                <div>
+                  <div className="flex items-center justify-between text-sm text-zinc-200">
+                    <span>Visual tracking</span>
+                    <span className="text-emerald-200">
+                      {visualTrackingLevel[0]}
+                    </span>
+                  </div>
+                  <Slider
+                    className="mt-2"
+                    min={1}
+                    max={10}
+                    step={1}
+                    value={visualTrackingLevel}
+                    onValueChange={setVisualTrackingLevel}
+                  />
+                </div>
+                <div>
+                  <div className="flex items-center justify-between text-sm text-zinc-200">
+                    <span>Motor skills</span>
+                    <span className="text-emerald-200">
+                      {motorSkillsLevel[0]}
+                    </span>
+                  </div>
+                  <Slider
+                    className="mt-2"
+                    min={1}
+                    max={10}
+                    step={1}
+                    value={motorSkillsLevel}
+                    onValueChange={setMotorSkillsLevel}
+                  />
+                </div>
               </div>
-              <Slider
-                className="mt-2"
-                min={1}
-                max={10}
-                step={1}
-                value={motorSkillsLevel}
-                onValueChange={setMotorSkillsLevel}
-              />
-            </div>
-          </div>
-        </section>
+            </section>
 
-        <section className="space-y-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
-          <div>
-            <h2 className="text-lg font-semibold text-white">
-              1. Basic Profile
-            </h2>
-            <p className="text-sm text-zinc-400">
-              Helps tune difficulty and choose symmetric vs one-sided tasks.
-            </p>
-          </div>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <p className="text-sm text-zinc-200">Age range</p>
-              <div className="flex flex-wrap gap-2">
-                {ageRanges.map((option) =>
-                  optionButton(option, ageRange, setAgeRange),
-                )}
+            <section className="space-y-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
+              <div>
+                <h2 className="text-lg font-semibold text-white">
+                  1. Basic Profile
+                </h2>
+                <p className="text-sm text-zinc-400">
+                  Helps tune difficulty and choose symmetric vs one-sided tasks.
+                </p>
               </div>
-            </div>
-            <div className="space-y-2">
-              <p className="text-sm text-zinc-200">
-                Which side is more affected?
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {affectedSide.map((option) =>
-                  optionButton(option, side, setSide),
-                )}
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <p className="text-sm text-zinc-200">Age range</p>
+                  <div className="flex flex-wrap gap-2">
+                    {ageRanges.map((option) =>
+                      optionButton(option, ageRange, setAgeRange),
+                    )}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-sm text-zinc-200">
+                    Which side is more affected?
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {affectedSide.map((option) =>
+                      optionButton(option, side, setSide),
+                    )}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-sm text-zinc-200">
+                    Working with a therapist or doctor?
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {yesNo.map((option) =>
+                      optionButton(option, hasTherapist, setHasTherapist),
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
-            <div className="space-y-2">
-              <p className="text-sm text-zinc-200">
-                Working with a therapist or doctor?
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {yesNo.map((option) =>
-                  optionButton(option, hasTherapist, setHasTherapist),
-                )}
-              </div>
-            </div>
-          </div>
-        </section>
+            </section>
 
-        <section className="space-y-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
-          <div>
-            <h2 className="text-lg font-semibold text-white">
-              2. Injury & Symptoms
-            </h2>
-            <p className="text-sm text-zinc-400">
-              Helps avoid tasks that could be uncomfortable.
-            </p>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {symptomOptions.map((symptom) => (
-              <label
-                key={symptom.value}
-                className="flex items-center gap-3 text-sm text-zinc-200"
+            <section className="space-y-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
+              <div>
+                <h2 className="text-lg font-semibold text-white">
+                  2. Injury & Symptoms
+                </h2>
+                <p className="text-sm text-zinc-400">
+                  Helps avoid tasks that could be uncomfortable.
+                </p>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {symptomOptions.map((symptom) => (
+                  <label
+                    key={symptom.value}
+                    className="flex items-center gap-3 text-sm text-zinc-200"
+                  >
+                    <Checkbox
+                      checked={!!symptoms[symptom.value]}
+                      onCheckedChange={(checked) =>
+                        toggleSymptom(symptom.value, Boolean(checked))
+                      }
+                    />
+                    {symptom.label}
+                  </label>
+                ))}
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm text-zinc-200">
+                  How long since your injury?
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {injuryTimeline.map((option) =>
+                    optionButton(option, injuryTime, setInjuryTime),
+                  )}
+                </div>
+              </div>
+            </section>
+
+            <section className="space-y-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
+              <div>
+                <h2 className="text-lg font-semibold text-white">
+                  3. Vision & Eye Comfort
+                </h2>
+                <p className="text-sm text-zinc-400">
+                  Important for eye tracking comfort.
+                </p>
+              </div>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <p className="text-sm text-zinc-200">
+                    Do you get dizzy when tracking moving objects?
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {yesNo.map((option) =>
+                      optionButton(option, dizzyTracking, setDizzyTracking),
+                    )}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-sm text-zinc-200">
+                    Do you wear glasses or contacts?
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {yesNo.map((option) =>
+                      optionButton(option, wearsGlasses, setWearsGlasses),
+                    )}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-sm text-zinc-200">
+                    Do you have double vision?
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {yesNo.map((option) =>
+                      optionButton(option, doubleVision, setDoubleVision),
+                    )}
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section className="space-y-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
+              <div>
+                <h2 className="text-lg font-semibold text-white">
+                  5. Fatigue & Endurance
+                </h2>
+                <p className="text-sm text-zinc-400">
+                  Helps control session length and breaks.
+                </p>
+              </div>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <p className="text-sm text-zinc-200">
+                    How long can you focus before needing a break?
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {focusDurations.map((option) =>
+                      optionButton(option, focusTime, setFocusTime),
+                    )}
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-sm text-zinc-200">
+                    Do you get tired quickly when using screens?
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {yesNo.map((option) =>
+                      optionButton(option, screenFatigue, setScreenFatigue),
+                    )}
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {planError && (
+              <div className="rounded-xl border border-amber-400/40 bg-amber-500/10 px-3 py-2 text-xs text-amber-100">
+                {planError}
+              </div>
+            )}
+            <div className="flex justify-end">
+              <button
+                className="flex items-center justify-center gap-2 rounded-full bg-emerald-500 px-6 py-2 text-sm font-semibold text-black transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
+                onClick={submit}
+                disabled={isSubmitting}
               >
-                <Checkbox
-                  checked={!!symptoms[symptom.value]}
-                  onCheckedChange={(checked) =>
-                    toggleSymptom(symptom.value, Boolean(checked))
-                  }
-                />
-                {symptom.label}
-              </label>
-            ))}
-          </div>
-          <div className="space-y-2">
-            <p className="text-sm text-zinc-200">How long since your injury?</p>
-            <div className="flex flex-wrap gap-2">
-              {injuryTimeline.map((option) =>
-                optionButton(option, injuryTime, setInjuryTime),
-              )}
+                {isSubmitting && <Spinner className="size-4" />}
+                {isSubmitting ? "Generating..." : "Submit"}
+              </button>
             </div>
-          </div>
-        </section>
-
-        <section className="space-y-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
-          <div>
-            <h2 className="text-lg font-semibold text-white">
-              3. Vision & Eye Comfort
-            </h2>
-            <p className="text-sm text-zinc-400">
-              Important for eye tracking comfort.
-            </p>
-          </div>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <p className="text-sm text-zinc-200">
-                Do you get dizzy when tracking moving objects?
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {yesNo.map((option) =>
-                  optionButton(option, dizzyTracking, setDizzyTracking),
-                )}
-              </div>
-            </div>
-            <div className="space-y-2">
-              <p className="text-sm text-zinc-200">
-                Do you wear glasses or contacts?
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {yesNo.map((option) =>
-                  optionButton(option, wearsGlasses, setWearsGlasses),
-                )}
-              </div>
-            </div>
-            <div className="space-y-2">
-              <p className="text-sm text-zinc-200">
-                Do you have double vision?
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {yesNo.map((option) =>
-                  optionButton(option, doubleVision, setDoubleVision),
-                )}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section className="space-y-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
-          <div>
-            <h2 className="text-lg font-semibold text-white">
-              5. Fatigue & Endurance
-            </h2>
-            <p className="text-sm text-zinc-400">
-              Helps control session length and breaks.
-            </p>
-          </div>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <p className="text-sm text-zinc-200">
-                How long can you focus before needing a break?
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {focusDurations.map((option) =>
-                  optionButton(option, focusTime, setFocusTime),
-                )}
-              </div>
-            </div>
-            <div className="space-y-2">
-              <p className="text-sm text-zinc-200">
-                Do you get tired quickly when using screens?
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {yesNo.map((option) =>
-                  optionButton(option, screenFatigue, setScreenFatigue),
-                )}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {planError && (
-          <div className="rounded-xl border border-amber-400/40 bg-amber-500/10 px-3 py-2 text-xs text-amber-100">
-            {planError}
-          </div>
-        )}
-        <div className="flex justify-end">
-          <button
-            className="flex items-center justify-center gap-2 rounded-full bg-emerald-500 px-6 py-2 text-sm font-semibold text-black transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
-            onClick={submit}
-            disabled={isSubmitting}
-          >
-            {isSubmitting && <Spinner className="size-4" />}
-            {isSubmitting ? "Generating..." : "Submit"}
-          </button>
-        </div>
           </>
         ) : (
           <section className="space-y-6 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6">
@@ -481,14 +484,17 @@ export default function WorkoutPlanPage() {
               {(plan ?? []).map((item, index) => {
                 const repetitions = Math.max(1, item.days ?? 1);
                 const exerciseLink = buildExerciseLink(item);
-                const instances = Array.from({ length: repetitions }, (_, idx) => {
-                  const itemId = `week-${index + 1}-day-${idx + 1}`;
-                  return {
-                    itemId,
-                    label: `Session ${idx + 1}`,
-                    completed: completions[itemId] ?? false,
-                  };
-                });
+                const instances = Array.from(
+                  { length: repetitions },
+                  (_, idx) => {
+                    const itemId = `week-${index + 1}-day-${idx + 1}`;
+                    return {
+                      itemId,
+                      label: `Session ${idx + 1}`,
+                      completed: completions[itemId] ?? false,
+                    };
+                  },
+                );
 
                 return (
                   <details
@@ -546,14 +552,22 @@ export default function WorkoutPlanPage() {
                           }`}
                         >
                           <div>
-                            <div className={`text-sm font-semibold ${
-                              instance.completed ? "text-emerald-100" : "text-white"
-                            }`}>
+                            <div
+                              className={`text-sm font-semibold ${
+                                instance.completed
+                                  ? "text-emerald-100"
+                                  : "text-white"
+                              }`}
+                            >
                               {item.exercise}
                             </div>
-                            <div className={`text-xs ${
-                              instance.completed ? "text-emerald-200/80" : "text-zinc-400"
-                            }`}>
+                            <div
+                              className={`text-xs ${
+                                instance.completed
+                                  ? "text-emerald-200/80"
+                                  : "text-zinc-400"
+                              }`}
+                            >
                               {instance.label}
                             </div>
                           </div>
@@ -580,7 +594,10 @@ export default function WorkoutPlanPage() {
                                     completed,
                                   });
                                 } catch (error) {
-                                  console.error("Failed to save completion", error);
+                                  console.error(
+                                    "Failed to save completion",
+                                    error,
+                                  );
                                   setCompletions((prev) => ({
                                     ...prev,
                                     [instance.itemId]: !completed,

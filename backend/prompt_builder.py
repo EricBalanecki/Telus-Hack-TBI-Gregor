@@ -27,10 +27,13 @@ You are given a list of exercises. Each exercise has placeholders for numeric fi
 - "days": True = fill with a number from 1 to 7 days (easy = less days), False = null
 
 Steps:
-1. Select exactly 8 exercises that form a progressive 8-week plan.
-2. Start easy and gradually increase difficulty.
-3. Replace True values with appropriate numbers.
-4. Replace False values with null.
+    1. Select exactly 8 exercises that form a progressive 8-week plan.
+    2. Start easy and gradually increase difficulty.
+    3. You may alternate categories (e.g., visual-focused in week 1, motor-focused in week 2).
+    4. You may mix categories within a week (e.g., 3 visual exercises and 1 motor exercise in week 1).
+    5. If visual_level and motor_level are high, start with higher speeds or smaller dots.
+    6. Replace True values with appropriate numbers.
+    7. Replace False values with null.
 
 CRITICAL OUTPUT RULES:
 

@@ -27,19 +27,29 @@
   ],
   "plan": [
     {
+      "exercise": "Level 1 \u2013 Basic Visual Tracking",
+      "description": "Early rehab, low fatigue. Includes: 1. Follow the Dot (horizontal): dot moves left \u2192 right slowly, user follows with eyes, score = % time on target; 2. Follow the Dot (vertical): up \u2192 down movement, same scoring; 3. Circle Path: dot moves in a circle to train smooth pursuit. Purpose: rebuilds eye movement control, very low cognitive load.",
+      "dot_size": 2,
+      "speed": 1,
+      "rest_time": 25,
+      "target_size": null,
+      "num_targets": null,
+      "days": 3
+    },
+    {
       "exercise": "Level 1 \u2013 Motor Control",
       "description": "Early rehab, low fatigue. Instructions: Pop the ballons with the laserPurpose: rebuilds motor control, very low cognitive load.",
       "dot_size": null,
       "speed": null,
       "rest_time": null,
-      "target_size": 1,
-      "num_targets": 5,
-      "days": 3
+      "target_size": 2,
+      "num_targets": 10,
+      "days": 4
     },
     {
-      "exercise": "Level 1 \u2013 Basic Visual Tracking",
-      "description": "Early rehab, low fatigue. Includes: 1. Follow the Dot (horizontal): dot moves left \u2192 right slowly, user follows with eyes, score = % time on target; 2. Follow the Dot (vertical): up \u2192 down movement, same scoring; 3. Circle Path: dot moves in a circle to train smooth pursuit. Purpose: rebuilds eye movement control, very low cognitive load.",
-      "dot_size": 1,
+      "exercise": "Level 2 \u2013 Direction & Accuracy",
+      "description": "Trains reaction time, overshoot, and accuracy. Includes: 1. Random Target Jump: dot jumps to new locations every 2\u20133 seconds; 2. Choose the Highlighted Target: 3\u20135 circles, one turns green, user looks at green one. Purpose: trains quick refocus and attention shifting.",
+      "dot_size": 2,
       "speed": 1,
       "rest_time": 20,
       "target_size": null,
@@ -47,21 +57,11 @@
       "days": 4
     },
     {
-      "exercise": "Level 2 \u2013 Direction & Accuracy",
-      "description": "Trains reaction time, overshoot, and accuracy. Includes: 1. Random Target Jump: dot jumps to new locations every 2\u20133 seconds; 2. Choose the Highlighted Target: 3\u20135 circles, one turns green, user looks at green one. Purpose: trains quick refocus and attention shifting.",
-      "dot_size": 1,
-      "speed": 1,
-      "rest_time": 15,
-      "target_size": null,
-      "num_targets": null,
-      "days": 4
-    },
-    {
       "exercise": "Level 3 \u2013 Distractors & Control",
       "description": "Trains selective attention and visual filtering. Includes: 1. Follow the Red Dot: multiple dots move, follow only the red one; 2. Stay on Target: target stays still while distractors move, user keeps gaze on center target. Purpose: improves stability and focus.",
-      "dot_size": 2,
+      "dot_size": 1,
       "speed": 2,
-      "rest_time": 10,
+      "rest_time": 15,
       "target_size": null,
       "num_targets": null,
       "days": 5
@@ -69,7 +69,7 @@
     {
       "exercise": "Level 4 \u2013 Eye + Reaction",
       "description": "Trains reaction speed and gaze-based interaction. Includes: 1. Look to Trigger: dot appears, disappears when user looks at it, new dot spawns; 2. Gaze Simon Says: dot moves in a short pattern, user repeats pattern with eyes. Purpose: improves memory, motor planning, and reaction.",
-      "dot_size": 2,
+      "dot_size": 1,
       "speed": 2,
       "rest_time": 10,
       "target_size": null,
@@ -79,7 +79,7 @@
     {
       "exercise": "Level 5 \u2013 Eye + Thinking",
       "description": "Trains cognitive-motor integration and executive function. Includes: 1. Look at the Correct Answer: show problem and options, user looks at correct answer; 2. Color or Shape Rule: user looks only at correct shapes/colors among random items. Purpose: decision making, inhibition, and cognitive-motor integration.",
-      "dot_size": 2,
+      "dot_size": 1,
       "speed": 2,
       "rest_time": 10,
       "target_size": null,
@@ -89,7 +89,7 @@
     {
       "exercise": "Level 6 \u2013 Functional (Advanced)",
       "description": "Simulates real-life tasks and supports advanced rehab. Includes: 1. Visual Search: find the target among many items; 2. Reading-Style Tracking: line of dots moves like text, user follows like reading. Purpose: scanning ability, reading rehab, and eye movement sequencing.",
-      "dot_size": 3,
+      "dot_size": 1,
       "speed": 3,
       "rest_time": 5,
       "target_size": null,
@@ -99,17 +99,12 @@
     {
       "exercise": "Level 2 \u2013 Direction & Accuracy",
       "description": "Trains reaction time, overshoot, and accuracy. Includes: 1. Random Target Jump: dot jumps to new locations every 2\u20133 seconds; 2. Choose the Highlighted Target: 3\u20135 circles, one turns green, user looks at green one. Purpose: trains quick refocus and attention shifting.",
-      "dot_size": 3,
+      "dot_size": 1,
       "speed": 3,
       "rest_time": 5,
       "target_size": null,
       "num_targets": null,
       "days": 7
     }
-  ],
-  "plan_completions": {
-    "week-1-day-1": false,
-    "week-1-day-2": false,
-    "week-1-day-3": false
-  }
+  ]
 }
