@@ -74,7 +74,7 @@ export default function ExercisesPage() {
             className="rounded-full bg-emerald-500 px-5 py-2 text-sm font-semibold text-black"
             href="/exercises/calibration"
           >
-            Calibrate
+            Calibrate eye tracking
           </Link>
         </div>
         <section className="space-y-6">
