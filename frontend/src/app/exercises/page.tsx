@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -143,6 +144,7 @@ export default function ExercisesPage() {
       title: "Level 1: Visual Tracking",
       difficulty: "Easy",
       imageLabel: "Visual tracking paths",
+      imageSrc: "/exercises/level-1.png",
       href: "/exercises/level-1-visual-tracking",
       parts: [
         "Follow the Dot (horizontal)",
@@ -197,8 +199,14 @@ export default function ExercisesPage() {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="flex h-32 items-center justify-center rounded-lg border border-dashed border-zinc-700 bg-zinc-950/50 text-sm text-zinc-400">
-                    {exercise.imageLabel}
+                  <div className="relative h-32 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950/50">
+                    <Image
+                      src={exercise.imageSrc}
+                      alt={exercise.imageLabel}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover"
+                    />
                   </div>
                   <div className="space-y-2 text-sm text-zinc-200">
                     <p className="font-semibold text-white">Parts</p>

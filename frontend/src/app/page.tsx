@@ -28,12 +28,6 @@ export default function Home() {
           >
             Eye exercises
           </Link>
-          <Link
-            className="rounded-full border border-zinc-600 px-5 py-2 text-sm font-semibold text-white"
-            href="/calibration"
-          >
-            Calibration
-          </Link>
         </div>
       </main>
     </div>
