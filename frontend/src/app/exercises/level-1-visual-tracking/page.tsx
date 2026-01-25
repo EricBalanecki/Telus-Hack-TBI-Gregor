@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createRecord, getLatestScore } from "@/api/records";
+import { Slider } from "@/components/ui/slider";
 
 type GazePoint = {
   x: number;
@@ -38,7 +39,8 @@ const PHASES: ExercisePhase[] = [
 
 const EXERCISE_NAME = "Level 1: Visual Tracking";
 
-const DOT_RADIUS = 12;
+const BASE_DOT_RADIUS = 12;
+const GAZE_DOT_RADIUS = 6;
 const SMOOTHING_ALPHA = 0.15;
 
 const smoothEMA = (
@@ -55,12 +57,12 @@ const smoothEMA = (
   };
 };
 
-const clampToViewport = (point: GazePoint) => {
+const clampToViewport = (point: GazePoint, radius: number) => {
   const width = window.innerWidth;
   const height = window.innerHeight;
   return {
-    left: Math.min(Math.max(point.x, DOT_RADIUS), width - DOT_RADIUS),
-    top: Math.min(Math.max(point.y, DOT_RADIUS), height - DOT_RADIUS),
+    left: Math.min(Math.max(point.x, radius), width - radius),
+    top: Math.min(Math.max(point.y, radius), height - radius),
   };
 };
 
@@ -74,14 +76,20 @@ export default function LevelOneVisualTracking() {
   const [score, setScore] = useState<number | null>(null);
   const [latestScore, setLatestScore] = useState<number | null>(null);
   const [targetPoint, setTargetPoint] = useState<GazePoint | null>(null);
+  const [restSeconds, setRestSeconds] = useState(8);
+  const [dotSizeScale, setDotSizeScale] = useState(2);
+  const [speedScale, setSpeedScale] = useState(1);
 
   const webgazerRef = useRef<WebGazer | null>(null);
   const startTimeRef = useRef<number | null>(null);
   const animationRef = useRef<number | null>(null);
   const sampleCountRef = useRef(0);
   const totalDistanceRef = useRef(0);
+  const isRestingRef = useRef(false);
+  const restStartRef = useRef<number | null>(null);
 
   const currentPhase = PHASES[phaseIndex];
+  const targetRadius = BASE_DOT_RADIUS * dotSizeScale;
 
   const progressLabel = useMemo(() => {
     if (!currentPhase) {
@@ -164,24 +172,28 @@ export default function LevelOneVisualTracking() {
     totalDistanceRef.current = 0;
   };
 
-  const computeTarget = (phase: ExercisePhase, elapsedMs: number) => {
+  const computeTarget = (
+    phase: ExercisePhase,
+    elapsedMs: number,
+    radius: number,
+  ) => {
     const width = window.innerWidth;
     const height = window.innerHeight;
-    const travelX = width - DOT_RADIUS * 2;
-    const travelY = height - DOT_RADIUS * 2;
+    const travelX = width - radius * 2;
+    const travelY = height - radius * 2;
     const t = (elapsedMs % phase.durationMs) / phase.durationMs;
     const eased = 0.5 - Math.cos(t * Math.PI * 2) / 2;
 
     switch (phase.id) {
       case "horizontal":
         return {
-          x: DOT_RADIUS + travelX * eased,
+          x: radius + travelX * eased,
           y: height * 0.5,
         };
       case "vertical":
         return {
           x: width * 0.5,
-          y: DOT_RADIUS + travelY * eased,
+          y: radius + travelY * eased,
         };
       case "circle": {
         const radius = Math.min(travelX, travelY) * 0.35;
@@ -221,6 +233,8 @@ export default function LevelOneVisualTracking() {
     setLatestScore(accuracyScore);
     setStatus(`Accuracy ${accuracyScore}%`);
     setIsRunning(false);
+    isRestingRef.current = false;
+    restStartRef.current = null;
 
     try {
       await createRecord({
@@ -240,6 +254,8 @@ export default function LevelOneVisualTracking() {
     setIsRunning(true);
     setStatus(`Running • ${PHASES[0].label}`);
     resetScoring();
+    isRestingRef.current = false;
+    restStartRef.current = null;
     startTimeRef.current = performance.now();
   };
 
@@ -255,16 +271,40 @@ export default function LevelOneVisualTracking() {
         return;
       }
       const elapsed = timestamp - startTime;
-      const target = computeTarget(currentPhase, elapsed);
+      const scaledElapsed = elapsed * speedScale;
+
+      if (isRestingRef.current) {
+        const restStart = restStartRef.current ?? timestamp;
+        const restElapsed = timestamp - restStart;
+        if (restElapsed >= restSeconds * 1000) {
+          isRestingRef.current = false;
+          restStartRef.current = null;
+          const nextIndex = phaseIndex + 1;
+          setPhaseIndex(nextIndex);
+          setStatus(`Running • ${PHASES[nextIndex].label}`);
+          startTimeRef.current = timestamp;
+          animationRef.current = window.requestAnimationFrame(tick);
+          return;
+        } else {
+          animationRef.current = window.requestAnimationFrame(tick);
+          return;
+        }
+      }
+
+      const target = computeTarget(
+        currentPhase,
+        scaledElapsed,
+        targetRadius,
+      );
       setTargetPoint(target);
       updateScore(target);
 
       if (elapsed >= currentPhase.durationMs) {
         if (phaseIndex < PHASES.length - 1) {
-          const nextIndex = phaseIndex + 1;
-          setPhaseIndex(nextIndex);
-          setStatus(`Running • ${PHASES[nextIndex].label}`);
-          startTimeRef.current = timestamp;
+          isRestingRef.current = true;
+          restStartRef.current = timestamp;
+          setStatus(`Resting • ${restSeconds}s`);
+          setTargetPoint(null);
         } else {
           finishRun();
           return;
@@ -281,7 +321,15 @@ export default function LevelOneVisualTracking() {
         window.cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [currentPhase, isRunning, phaseIndex, smoothedGazePoint]);
+  }, [
+    currentPhase,
+    isRunning,
+    phaseIndex,
+    restSeconds,
+    smoothedGazePoint,
+    speedScale,
+    targetRadius,
+  ]);
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
@@ -332,6 +380,48 @@ export default function LevelOneVisualTracking() {
             )}
           </div>
 
+          <div className="mt-4 space-y-3 text-xs text-zinc-300">
+            <div className="flex items-center justify-between">
+              <span>Rest time between parts</span>
+              <span>{restSeconds}s</span>
+            </div>
+            <Slider
+              value={[restSeconds]}
+              min={1}
+              max={30}
+              step={1}
+              onValueChange={(value) =>
+                setRestSeconds(value[0] ?? 1)
+              }
+            />
+            <div className="flex items-center justify-between">
+              <span>Dot size</span>
+              <span>{dotSizeScale}</span>
+            </div>
+            <Slider
+              value={[dotSizeScale]}
+              min={1}
+              max={3}
+              step={1}
+              onValueChange={(value) =>
+                setDotSizeScale(value[0] ?? 1)
+              }
+            />
+            <div className="flex items-center justify-between">
+              <span>Speed</span>
+              <span>{speedScale}</span>
+            </div>
+            <Slider
+              value={[speedScale]}
+              min={1}
+              max={3}
+              step={1}
+              onValueChange={(value) =>
+                setSpeedScale(value[0] ?? 1)
+              }
+            />
+          </div>
+
           <details className="mt-3 text-xs text-zinc-400">
             <summary className="cursor-pointer text-zinc-300">
               Scoring details
@@ -349,8 +439,12 @@ export default function LevelOneVisualTracking() {
 
       {isRunning && targetPoint && (
         <div
-          className="pointer-events-none fixed z-40 h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-400 shadow-[0_0_16px_rgba(251,191,36,0.9)]"
-          style={clampToViewport(targetPoint)}
+          className="pointer-events-none fixed z-40 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-400 shadow-[0_0_16px_rgba(251,191,36,0.9)]"
+          style={{
+            ...clampToViewport(targetPoint, targetRadius),
+            width: targetRadius * 2,
+            height: targetRadius * 2,
+          }}
           aria-hidden="true"
         />
       )}
@@ -358,7 +452,7 @@ export default function LevelOneVisualTracking() {
       {smoothedGazePoint && (
         <div
           className="pointer-events-none fixed z-50 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-400/90 shadow-[0_0_10px_rgba(52,211,153,0.7)]"
-          style={clampToViewport(smoothedGazePoint)}
+          style={clampToViewport(smoothedGazePoint, GAZE_DOT_RADIUS)}
           aria-hidden="true"
         />
       )}

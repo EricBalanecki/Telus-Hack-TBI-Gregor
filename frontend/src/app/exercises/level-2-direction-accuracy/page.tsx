@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createRecord } from "@/api/records";
+import { Slider } from "@/components/ui/slider";
 
 type GazePoint = {
   x: number;
@@ -44,7 +45,8 @@ const PHASES: Phase[] = [
 const EXERCISE_NAME = "Level 2: Direction & Accuracy";
 
 const SMOOTHING_ALPHA = 0.15;
-const DOT_RADIUS = 14;
+const BASE_DOT_RADIUS = 14;
+const GAZE_DOT_RADIUS = 6;
 const TARGET_THRESHOLD = 65;
 const REACTION_MIN_MS = 200;
 const REACTION_MAX_MS = 1200;
@@ -63,21 +65,21 @@ const smoothEMA = (
   };
 };
 
-const clampToViewport = (point: GazePoint) => {
+const clampToViewport = (point: GazePoint, radius: number) => {
   const width = window.innerWidth;
   const height = window.innerHeight;
   return {
-    left: Math.min(Math.max(point.x, DOT_RADIUS), width - DOT_RADIUS),
-    top: Math.min(Math.max(point.y, DOT_RADIUS), height - DOT_RADIUS),
+    left: Math.min(Math.max(point.x, radius), width - radius),
+    top: Math.min(Math.max(point.y, radius), height - radius),
   };
 };
 
 const randomInRange = (min: number, max: number) =>
   Math.random() * (max - min) + min;
 
-const randomPoint = () => ({
-  x: randomInRange(DOT_RADIUS + 40, window.innerWidth - DOT_RADIUS - 40),
-  y: randomInRange(DOT_RADIUS + 80, window.innerHeight - DOT_RADIUS - 80),
+const randomPoint = (radius: number) => ({
+  x: randomInRange(radius + 40, window.innerWidth - radius - 40),
+  y: randomInRange(radius + 80, window.innerHeight - radius - 80),
 });
 
 const createGridTargets = (): CircleTarget[] => {
@@ -114,6 +116,9 @@ export default function LevelTwoDirectionAccuracy() {
   const [targetPoint, setTargetPoint] = useState<GazePoint | null>(null);
   const [highlightTargets, setHighlightTargets] = useState<CircleTarget[]>([]);
   const [highlightIndex, setHighlightIndex] = useState(0);
+  const [restSeconds, setRestSeconds] = useState(8);
+  const [dotSizeScale, setDotSizeScale] = useState(2);
+  const [speedScale, setSpeedScale] = useState(1);
 
   const webgazerRef = useRef<WebGazer | null>(null);
   const animationRef = useRef<number | null>(null);
@@ -121,6 +126,8 @@ export default function LevelTwoDirectionAccuracy() {
   const targetChangeAtRef = useRef<number>(0);
   const targetStartRef = useRef<number>(0);
   const acquiredRef = useRef(false);
+  const isRestingRef = useRef(false);
+  const restStartRef = useRef<number | null>(null);
 
   const reactionTimesRef = useRef<number[]>([]);
   const accuracySamplesRef = useRef(0);
@@ -131,6 +138,7 @@ export default function LevelTwoDirectionAccuracy() {
   const highlightCorrectRef = useRef(0);
 
   const currentPhase = PHASES[phaseIndex];
+  const targetRadius = BASE_DOT_RADIUS * dotSizeScale;
 
   const progressLabel = useMemo(() => {
     if (!currentPhase) {
@@ -205,12 +213,14 @@ export default function LevelTwoDirectionAccuracy() {
     highlightCorrectRef.current = 0;
   };
 
+  const getTargetInterval = () =>
+    randomInRange(2000, 3000) / speedScale;
+
   const startJumpTarget = (timestamp: number) => {
-    setTargetPoint(randomPoint());
+    setTargetPoint(randomPoint(targetRadius));
     targetStartRef.current = timestamp;
     acquiredRef.current = false;
-    targetChangeAtRef.current =
-      timestamp + randomInRange(2000, 3000);
+    targetChangeAtRef.current = timestamp + getTargetInterval();
   };
 
   const startHighlightTargets = (timestamp: number) => {
@@ -220,7 +230,7 @@ export default function LevelTwoDirectionAccuracy() {
     setHighlightIndex(initial);
     targetStartRef.current = timestamp;
     acquiredRef.current = false;
-    targetChangeAtRef.current = timestamp + randomInRange(2000, 3000);
+    targetChangeAtRef.current = timestamp + getTargetInterval();
   };
 
   const finishRun = async () => {
@@ -322,6 +332,8 @@ export default function LevelTwoDirectionAccuracy() {
     setIsRunning(true);
     setStatus(`Running • ${PHASES[0].label}`);
     resetMetrics();
+    isRestingRef.current = false;
+    restStartRef.current = null;
     phaseStartRef.current = performance.now();
     startJumpTarget(phaseStartRef.current);
   };
@@ -338,6 +350,28 @@ export default function LevelTwoDirectionAccuracy() {
 
       const phaseStart = phaseStartRef.current ?? timestamp;
       const elapsedPhase = timestamp - phaseStart;
+
+      if (isRestingRef.current) {
+        const restStart = restStartRef.current ?? timestamp;
+        const restElapsed = timestamp - restStart;
+        if (restElapsed >= restSeconds * 1000) {
+          isRestingRef.current = false;
+          restStartRef.current = null;
+          const nextIndex = phaseIndex + 1;
+          setPhaseIndex(nextIndex);
+          setStatus(`Running • ${PHASES[nextIndex].label}`);
+          phaseStartRef.current = timestamp;
+          if (PHASES[nextIndex].id === "highlight") {
+            startHighlightTargets(timestamp);
+          } else {
+            startJumpTarget(timestamp);
+          }
+          animationRef.current = window.requestAnimationFrame(tick);
+          return;
+        }
+        animationRef.current = window.requestAnimationFrame(tick);
+        return;
+      }
 
       if (currentPhase.id === "jump" && targetPoint) {
         accuracySamplesRef.current += 1;
@@ -384,7 +418,7 @@ export default function LevelTwoDirectionAccuracy() {
             }
             targetStartRef.current = timestamp;
             acquiredRef.current = false;
-            targetChangeAtRef.current = timestamp + randomInRange(2000, 3000);
+            targetChangeAtRef.current = timestamp + getTargetInterval();
             return next;
           });
         }
@@ -392,13 +426,11 @@ export default function LevelTwoDirectionAccuracy() {
 
       if (elapsedPhase >= currentPhase.durationMs) {
         if (phaseIndex < PHASES.length - 1) {
-          const nextIndex = phaseIndex + 1;
-          setPhaseIndex(nextIndex);
-          setStatus(`Running • ${PHASES[nextIndex].label}`);
-          phaseStartRef.current = timestamp;
-          if (PHASES[nextIndex].id === "highlight") {
-            startHighlightTargets(timestamp);
-          }
+          isRestingRef.current = true;
+          restStartRef.current = timestamp;
+          setStatus(`Resting • ${restSeconds}s`);
+          setTargetPoint(null);
+          setHighlightTargets([]);
         } else {
           finishRun();
           return;
@@ -415,7 +447,18 @@ export default function LevelTwoDirectionAccuracy() {
         window.cancelAnimationFrame(animationRef.current);
       }
     };
-  }, [currentPhase, highlightIndex, highlightTargets, isRunning, phaseIndex, smoothedGazePoint, targetPoint]);
+  }, [
+    currentPhase,
+    highlightIndex,
+    highlightTargets,
+    isRunning,
+    phaseIndex,
+    restSeconds,
+    smoothedGazePoint,
+    speedScale,
+    targetPoint,
+    targetRadius,
+  ]);
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
@@ -456,6 +499,48 @@ export default function LevelTwoDirectionAccuracy() {
               </button>
             </div>
 
+            <div className="mt-4 space-y-3 text-xs text-zinc-300">
+              <div className="flex items-center justify-between">
+                <span>Rest time between parts</span>
+                <span>{restSeconds}s</span>
+              </div>
+              <Slider
+                value={[restSeconds]}
+                min={1}
+                max={30}
+                step={1}
+                onValueChange={(value) =>
+                  setRestSeconds(value[0] ?? 1)
+                }
+              />
+              <div className="flex items-center justify-between">
+                <span>Dot size</span>
+                <span>{dotSizeScale}</span>
+              </div>
+              <Slider
+                value={[dotSizeScale]}
+                min={1}
+                max={3}
+                step={1}
+                onValueChange={(value) =>
+                  setDotSizeScale(value[0] ?? 1)
+                }
+              />
+              <div className="flex items-center justify-between">
+                <span>Speed</span>
+                <span>{speedScale}</span>
+              </div>
+              <Slider
+                value={[speedScale]}
+                min={1}
+                max={3}
+                step={1}
+                onValueChange={(value) =>
+                  setSpeedScale(value[0] ?? 1)
+                }
+              />
+            </div>
+
             {scoreSummary && (
               <div className="mt-3 text-xs text-emerald-200">
                 {scoreSummary}
@@ -467,8 +552,12 @@ export default function LevelTwoDirectionAccuracy() {
 
       {isRunning && currentPhase?.id === "jump" && targetPoint && (
         <div
-          className="pointer-events-none fixed z-40 h-7 w-7 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-400 shadow-[0_0_16px_rgba(251,191,36,0.9)]"
-          style={clampToViewport(targetPoint)}
+          className="pointer-events-none fixed z-40 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-400 shadow-[0_0_16px_rgba(251,191,36,0.9)]"
+          style={{
+            ...clampToViewport(targetPoint, targetRadius),
+            width: targetRadius * 2,
+            height: targetRadius * 2,
+          }}
           aria-hidden="true"
         />
       )}
@@ -478,12 +567,16 @@ export default function LevelTwoDirectionAccuracy() {
         highlightTargets.map((target, index) => (
           <div
             key={target.id}
-            className={`pointer-events-none fixed z-40 h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full border ${
+            className={`pointer-events-none fixed z-40 -translate-x-1/2 -translate-y-1/2 rounded-full border ${
               index === highlightIndex
                 ? "border-emerald-300 bg-emerald-400/80 shadow-[0_0_12px_rgba(52,211,153,0.7)]"
                 : "border-zinc-600 bg-zinc-800/60"
             }`}
-            style={clampToViewport(target)}
+            style={{
+              ...clampToViewport(target, targetRadius),
+              width: targetRadius * 2,
+              height: targetRadius * 2,
+            }}
             aria-hidden="true"
           />
         ))}
@@ -491,7 +584,7 @@ export default function LevelTwoDirectionAccuracy() {
       {smoothedGazePoint && (
         <div
           className="pointer-events-none fixed z-50 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-400/90 shadow-[0_0_10px_rgba(52,211,153,0.7)]"
-          style={clampToViewport(smoothedGazePoint)}
+          style={clampToViewport(smoothedGazePoint, GAZE_DOT_RADIUS)}
           aria-hidden="true"
         />
       )}
