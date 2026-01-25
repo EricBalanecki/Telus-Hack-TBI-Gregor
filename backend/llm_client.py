@@ -1,8 +1,8 @@
 from openai import OpenAI
 import os
 
-from schemas import BaseInput
-from prompt_builder import build_base_exercise_prompt
+from schemas import BaseInput, NotesInput
+from prompt_builder import build_base_exercise_prompt, build_notes_prompt
 
 API_KEY = os.getenv("API_KEY")
 if not API_KEY:
@@ -13,11 +13,7 @@ BASE_URL = "https://gemma-3-27b-3ca9s.paas.ai.telus.com/v1"
 
 client = OpenAI(api_key="dc8704d41888afb2b889a8ebac81d12f", base_url=BASE_URL)
 
-def get_base_exercise(input: BaseInput):
-    prompt = build_base_exercise_prompt(input)
-
-    print(prompt)
-
+def call_llm(prompt):
     response = client.completions.create(
         model=MODEL_NAME,
         prompt=prompt,
@@ -26,3 +22,13 @@ def get_base_exercise(input: BaseInput):
     )
 
     return response.choices[0].text.strip()
+
+def get_base_exercise(input: BaseInput):
+    prompt = build_base_exercise_prompt(input)
+
+    return call_llm(prompt)
+
+def get_notes(input: NotesInput):
+    prompt = build_notes_prompt(input)
+
+    return call_llm(prompt)

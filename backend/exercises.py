@@ -1,44 +1,88 @@
-EXERCISES = {
-    "slow_fixation_hold": {
-        "exercise": "Slow Fixation Hold",
-        "description": "Very gentle eye tracking for early recovery. Large dot and slow movement.",
-        "dot_size": 3,
-        "speed": 1,
-        "rest_time": 15
+EXERCISES = [
+    # Level 1 – Basic Visual Tracking
+    {
+        "exercise": "Level 1 – Basic Visual Tracking",
+        "description": (
+            "Early rehab, low fatigue. Includes: "
+            "1. Follow the Dot (horizontal): dot moves left → right slowly, user follows with eyes, score = % time on target; "
+            "2. Follow the Dot (vertical): up → down movement, same scoring; "
+            "3. Circle Path: dot moves in a circle to train smooth pursuit. "
+            "Purpose: rebuilds eye movement control, very low cognitive load."
+        ),
+        "dot_size": True,
+        "speed": True,
+        "rest_time": True
     },
-    "basic_fixation_hold": {
-        "exercise": "Basic Fixation Hold",
-        "description": "Slow eye tracking with medium sized dot.",
-        "dot_size": 2,
-        "speed": 1,
-        "rest_time": 12
+
+    # Level 2 – Direction & Accuracy
+    {
+        "exercise": "Level 2 – Direction & Accuracy",
+        "description": (
+            "Trains reaction time, overshoot, and accuracy. Includes: "
+            "1. Random Target Jump: dot jumps to new locations every 2–3 seconds; "
+            "2. Choose the Highlighted Target: 3–5 circles, one turns green, user looks at green one. "
+            "Purpose: trains quick refocus and attention shifting."
+        ),
+        "dot_size": True,
+        "speed": True,
+        "rest_time": True
     },
-    "smooth_pursuit": {
-        "exercise": "Smooth Pursuit",
-        "description": "Follow dot moving smoothly across screen.",
-        "dot_size": 2,
-        "speed": 2,
-        "rest_time": 10
+
+    # Level 3 – Distractors & Control
+    {
+        "exercise": "Level 3 – Distractors & Control",
+        "description": (
+            "Trains selective attention and visual filtering. Includes: "
+            "1. Follow the Red Dot: multiple dots move, follow only the red one; "
+            "2. Stay on Target: target stays still while distractors move, user keeps gaze on center target. "
+            "Purpose: improves stability and focus."
+        ),
+        "dot_size": True,
+        "speed": True,
+        "rest_time": True
     },
-    "faster_smooth_pursuit": {
-        "exercise": "Faster Smooth Pursuit",
-        "description": "Medium speed dot movement requiring quicker tracking.",
-        "dot_size": 2,
-        "speed": 2,
-        "rest_time": 8
+
+    # Level 4 – Eye + Reaction
+    {
+        "exercise": "Level 4 – Eye + Reaction",
+        "description": (
+            "Trains reaction speed and gaze-based interaction. Includes: "
+            "1. Look to Trigger: dot appears, disappears when user looks at it, new dot spawns; "
+            "2. Gaze Simon Says: dot moves in a short pattern, user repeats pattern with eyes. "
+            "Purpose: improves memory, motor planning, and reaction."
+        ),
+        "dot_size": True,
+        "speed": True,
+        "rest_time": True
     },
-    "rapid_tracking": {
-        "exercise": "Rapid Tracking",
-        "description": "Small dot moving quickly to challenge advanced recovery.",
-        "dot_size": 1,
-        "speed": 3,
-        "rest_time": 6
+
+    # Level 5 – Eye + Thinking
+    {
+        "exercise": "Level 5 – Eye + Thinking",
+        "description": (
+            "Trains cognitive-motor integration and executive function. Includes: "
+            "1. Look at the Correct Answer: show problem and options, user looks at correct answer; "
+            "2. Color or Shape Rule: user looks only at correct shapes/colors among random items. "
+            "Purpose: decision making, inhibition, and cognitive-motor integration."
+        ),
+        "dot_size": True,
+        "speed": True,
+        "rest_time": True
     },
-    "saccade_jumps": {
-        "exercise": "Saccade Jumps",
-        "description": "Dot jumps between positions requiring fast eye movements.",
-        "dot_size": 1,
-        "speed": 3,
-        "rest_time": 5
+
+    # Level 6 – Functional (advanced)
+    {
+        "exercise": "Level 6 – Functional (Advanced)",
+        "description": (
+            "Simulates real-life tasks and supports advanced rehab. Includes: "
+            "1. Visual Search: find the target among many items; "
+            "2. Reading-Style Tracking: line of dots moves like text, user follows like reading. "
+            "Purpose: scanning ability, reading rehab, and eye movement sequencing."
+        ),
+        "dot_size": True,
+        "speed": True,
+        "rest_time": True
     }
-}
+]
+
+
