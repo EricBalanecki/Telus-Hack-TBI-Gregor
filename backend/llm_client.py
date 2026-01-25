@@ -2,8 +2,8 @@ from openai import OpenAI
 import os
 from dotenv import load_dotenv
 
-from schemas import BaseInput, NotesInput
-from prompt_builder import build_base_exercise_prompt, build_notes_prompt
+from schemas import BaseInput, NotesInput, ChatMessage
+from prompt_builder import build_base_exercise_prompt, build_notes_prompt, build_coach_prompt
 
 load_dotenv()
 
@@ -35,3 +35,14 @@ def get_notes(input: NotesInput):
     prompt = build_notes_prompt(input)
 
     return call_llm(prompt)
+
+def get_coach_response(messages: list[ChatMessage], db: dict):
+    prompt = build_coach_prompt(messages, db)
+
+    response = call_llm(prompt)
+    if response:
+        return response
+
+    # Retry once with a stronger instruction to avoid empty responses.
+    retry_prompt = f"{prompt}\n\nIMPORTANT: Return a non-empty response."
+    return call_llm(retry_prompt)

@@ -1,10 +1,10 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from schemas import BaseInput, NotesInput, RecordInput
-from llm_client import get_base_exercise, get_notes
-from json_service import add_record, get_records
+from schemas import BaseInput, NotesInput, RecordInput, CoachInput
+from llm_client import get_base_exercise, get_notes, get_coach_response
+from json_service import add_record, get_records, read_db
 import json
 
 
@@ -62,6 +62,16 @@ def generate_notes(data: NotesInput):
     result = get_notes(data)
     return {
         "notes": result
+    }
+
+@app.post("/coach")
+def coach_chat(data: CoachInput):
+    db = read_db()
+    reply = get_coach_response(data.messages, db)
+    if not reply or not reply.strip():
+        raise HTTPException(status_code=502, detail="Empty coach response")
+    return {
+        "reply": reply
     }
 
     

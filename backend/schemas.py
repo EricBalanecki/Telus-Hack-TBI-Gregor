@@ -1,4 +1,5 @@
 from pydantic import BaseModel
+from typing import List
 
 class RecordInput(BaseModel):
     date: str
@@ -16,3 +17,10 @@ class NotesInput(BaseModel):
     exercise: str
     description: str
     accuracy: int
+
+class ChatMessage(BaseModel):
+    role: str
+    content: str
+
+class CoachInput(BaseModel):
+    messages: List[ChatMessage]

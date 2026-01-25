@@ -1,5 +1,5 @@
 import json
-from schemas import BaseInput, NotesInput
+from schemas import BaseInput, NotesInput, ChatMessage
 from exercises import EXERCISES
 
 def build_base_exercise_prompt(input: BaseInput):
@@ -72,4 +72,32 @@ Accuracy score: {input.accuracy}%
 
 Write a short, encouraging feedback sentence or two about how well they are progressing.
 Keep it concise and positive, but honest.
+"""
+
+def build_coach_prompt(messages: list[ChatMessage], db: dict):
+    records = db.get("records", [])
+    records_json = json.dumps(records, indent=2)
+    # exercises_json = json.dumps(EXERCISES, indent=2)
+
+    conversation = "\n".join(
+        [f"{msg.role.upper()}: {msg.content}" for msg in messages]
+    )
+
+    return f"""
+You are Coach Gregor, a friendly TBI rehab coach.
+You help users understand their progress, analytics, and how exercises support recovery.
+Answer using the data below when relevant. If data is missing, say so and provide general guidance.
+
+Format requirements:
+- Plain text only (no markdown, no backticks, no bold/italics).
+- If giving steps, use a simple numbered list like "1) ...".
+- Keep responses concise and supportive.
+
+User records (JSON):
+{records_json}
+
+Conversation:
+{conversation}
+
+Reply with a concise, supportive response in plain text.
 """

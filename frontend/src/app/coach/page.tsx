@@ -17,48 +17,15 @@ const promptSuggestions = [
   "What should I do if my heart rate rises during exercises?",
 ];
 
-const buildResponse = (prompt: string) => {
-  const lower = prompt.toLowerCase();
-  if (lower.includes("progress") || lower.includes("trend")) {
-    return (
-      "Based on your recent sessions, focus on consistency. " +
-      "If your scores are rising, keep the same cadence. If they dipped, " +
-      "shorter, more frequent sessions often help stabilize performance."
-    );
-  }
-  if (lower.includes("motor")) {
-    return (
-      "Motor control improves with steady, repeatable drills. " +
-      "Aim for smooth, deliberate movements and short breaks between sets."
-    );
-  }
-  if (lower.includes("tbi") || lower.includes("visual")) {
-    return (
-      "Visual tracking supports TBI recovery by rebuilding eye movement control " +
-      "and attention shifting. Small, frequent sessions help reduce fatigue " +
-      "while reinforcing accuracy."
-    );
-  }
-  if (lower.includes("heart") || lower.includes("bpm")) {
-    return (
-      "If your heart rate rises during exercises, slow down and take a short break. " +
-      "Use the heart rate prompts to pause or recalibrate your baseline, and aim " +
-      "for steady breathing before continuing."
-    );
-  }
-  return (
-    "I can help you review progress and explain exercises. " +
-    "Ask about trends, accuracy, or how to improve motor control."
-  );
-};
-
 export default function CoachPage() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [isSending, setIsSending] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const hasInput = input.trim().length > 0;
 
-  const canShowPrompts = !hasInput && messages.length === 0;
+  const canShowPrompts = !hasInput && messages.length === 0 && !isSending;
 
   const handleClose = () => {
     setIsOpen(false);
@@ -66,23 +33,59 @@ export default function CoachPage() {
     setMessages([]);
   };
 
-  const handleSend = () => {
+  const handleSend = async () => {
     const trimmed = input.trim();
-    if (!trimmed) {
+    if (!trimmed || isSending) {
       return;
     }
+
     const userMessage: ChatMessage = {
       id: `${Date.now()}-user`,
       role: "user",
       content: trimmed,
     };
-    const assistantMessage: ChatMessage = {
-      id: `${Date.now()}-assistant`,
-      role: "assistant",
-      content: buildResponse(trimmed),
-    };
-    setMessages((prev) => [...prev, userMessage, assistantMessage]);
+
+    setMessages((prev) => [...prev, userMessage]);
     setInput("");
+    setIsSending(true);
+    setErrorMessage(null);
+
+    try {
+      const response = await fetch("http://localhost:8000/coach", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          messages: [...messages, userMessage].map((message) => ({
+            role: message.role,
+            content: message.content,
+          })),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Coach request failed");
+      }
+
+      const data = (await response.json()) as { reply?: string };
+      const replyText = data.reply?.trim();
+      if (!replyText) {
+        throw new Error("Empty coach response");
+      }
+
+      const assistantMessage: ChatMessage = {
+        id: `${Date.now()}-assistant`,
+        role: "assistant",
+        content: replyText,
+      };
+      setMessages((prev) => [...prev, assistantMessage]);
+    } catch (error) {
+      console.error("Coach request failed", error);
+      setErrorMessage(
+        "Coach Gregor could not respond. Please try again in a moment.",
+      );
+    } finally {
+      setIsSending(false);
+    }
   };
 
   const promptChips = useMemo(
@@ -108,7 +111,8 @@ export default function CoachPage() {
             Coach Gregor
           </h1>
           <p className="text-sm text-zinc-400">
-            Ask about progress, accuracy, or how motor control improves TBI recovery.
+            Ask about progress, accuracy, or how motor control improves TBI
+            recovery.
           </p>
         </div>
 
@@ -139,7 +143,8 @@ export default function CoachPage() {
             <div className="flex-1 space-y-4 overflow-y-auto px-4 py-4">
               {messages.length === 0 && (
                 <div className="rounded-2xl border border-zinc-800 bg-zinc-950/70 px-4 py-4 text-sm text-zinc-300">
-                  Ask about your current progress, accuracy trends, or tips for motor control.
+                  Ask about your current progress, accuracy trends, or tips for
+                  motor control.
                 </div>
               )}
               {messages.map((message) => (
@@ -150,7 +155,7 @@ export default function CoachPage() {
                   }`}
                 >
                   <div
-                    className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm ${
+                    className={`max-w-[80%] whitespace-pre-line rounded-2xl px-4 py-3 text-sm ${
                       message.role === "user"
                         ? "bg-emerald-500/20 text-emerald-100"
                         : "bg-zinc-900/80 text-zinc-200"
@@ -160,11 +165,26 @@ export default function CoachPage() {
                   </div>
                 </div>
               ))}
+              {isSending && (
+                <div className="flex justify-start">
+                  <div className="max-w-[80%] rounded-2xl bg-zinc-900/80 px-4 py-3 text-sm text-zinc-200">
+                    Coach Gregor is thinking...
+                  </div>
+                </div>
+              )}
             </div>
 
             {canShowPrompts && (
               <div className="flex flex-wrap gap-2 border-t border-zinc-800 px-4 py-3">
                 {promptChips}
+              </div>
+            )}
+
+            {errorMessage && (
+              <div className="border-t border-zinc-800 px-4 py-3">
+                <div className="rounded-xl border border-amber-400/40 bg-amber-500/10 px-3 py-2 text-xs text-amber-100">
+                  {errorMessage}
+                </div>
               </div>
             )}
 
@@ -175,7 +195,7 @@ export default function CoachPage() {
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
                 onKeyDown={(event) => {
-                  if (event.key === "Enter") {
+                  if (event.key === "Enter" && !isSending) {
                     handleSend();
                   }
                 }}
@@ -183,6 +203,7 @@ export default function CoachPage() {
               <button
                 className="rounded-full border border-emerald-400/60 px-3 py-2 text-emerald-200 transition hover:bg-emerald-500/10"
                 onClick={handleSend}
+                disabled={isSending}
                 type="button"
               >
                 <Send className="h-4 w-4" />
