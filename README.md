@@ -28,6 +28,8 @@ Frontend (TypeScript)
 - Next.js
 - React
 - Web Bluetooth
+	- Accessibility remote
+	- Heart rate monitoring
 - Web Viewer
 - Three.js
 
