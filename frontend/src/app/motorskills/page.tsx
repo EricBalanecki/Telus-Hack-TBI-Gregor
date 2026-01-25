@@ -9,6 +9,7 @@ import { BluetoothRemoteGATTCharacteristic } from 'web-bluetooth';
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import { useGLTF } from "@react-three/drei";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 
 
@@ -79,7 +80,9 @@ export default function PhysicalDevice() {
 				</Canvas>
 			</div>
 
-			{!device && <button onClick={onClick} className="absolute z-20 top-5 left-5">Connect</button>}
+			{!device && <button onClick={onClick} className="absolute z-20 top-5 left-5 rounded-full border border-zinc-600 px-5 py-2 text-sm font-semibold text-white">
+				Connect to Remote
+			</button>}
 			{device && <span className="absolute z-20 top-5 left-5">{device.name}</span>}
 
 		</div>
@@ -120,6 +123,9 @@ function RotatingLP({ quatRef, wallRef, hitPointsRef }: {
 			const last = hitPointsRef.current[hitPointsRef.current.length - 1]
 			if (!last || last.distanceTo(point) > 0.05) {
 				hitPointsRef.current.push(point)
+			}
+			if (last.distanceTo(point) > 3) {
+				hitPointsRef.current = []
 			}
 
 			// Update laser line
@@ -163,12 +169,12 @@ function RotatingLP({ quatRef, wallRef, hitPointsRef }: {
 			{/* Laser line */}
 			<line ref={lineRef}>
 				<bufferGeometry />
-				<lineBasicMaterial color="red" linewidth={2} />
+				<lineBasicMaterial color="red" linewidth={14} />
 			</line>
 
 			<line ref={trailRef}>
 				<bufferGeometry />
-				<lineBasicMaterial color="cyan" linewidth={2} />
+				<lineBasicMaterial color="cyan" linewidth={14} />
 			</line>
 
 			{/* Dot on wall */}
