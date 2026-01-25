@@ -19,7 +19,7 @@ Does the user get dizzy when tracking moving objects: {input.dizzy_tracking_move
 Does the user get tired quickly when using screens: {input.tired_using_screens}
 
 You are given a list of exercises. Each exercise has placeholders for numeric fields:
-- "dot_size": True = fill with a number from 1 (smallest) to 3 (largest), False = null
+- "dot_size": True = fill with a number from 1 (smallest, hardest) to 3 (largest, easiest), False = null
 - "speed": True = fill with a number from 1 (slowest) to 3 (fastest), False = null
 - "rest_time": True = fill with a number from 5 to 30 seconds (easy = more rest time), False = null
 - "target_size": True = fill with a number from 0.5 (smallest) to 3 (largest), False = null
@@ -77,7 +77,8 @@ Keep it concise and positive, but honest.
 def build_coach_prompt(messages: list[ChatMessage], db: dict):
     records = db.get("records", [])
     records_json = json.dumps(records, indent=2)
-    exercises_json = json.dumps(EXERCISES, indent=2)      
+    plan = db.get("plan", [])
+    plan_json = json.dumps(plan, indent=2)
 
     conversation = "\n".join(
         [f"{msg.role.upper()}: {msg.content}" for msg in messages]
@@ -97,8 +98,8 @@ Format requirements:
 User records (JSON):
 {records_json}
 
-Exercise catalog (JSON):
-{exercises_json}
+Workout plan (JSON):
+{plan_json}
 
 Conversation:
 {conversation}

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
+import { Spinner } from "@/components/ui/spinner";
 import { createPlan, fetchPlan, PlanInput, PlanItem } from "@/api/plan";
 import {
   fetchPlanCompletions,
@@ -80,6 +81,7 @@ export default function WorkoutPlanPage() {
   const [planError, setPlanError] = useState<string | null>(null);
   const [showSurvey, setShowSurvey] = useState(true);
   const [completions, setCompletions] = useState<PlanCompletionMap>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const totalSessions = useMemo(() => {
     return (plan ?? []).reduce((sum, item) => {
@@ -188,6 +190,7 @@ export default function WorkoutPlanPage() {
   };
 
   try {
+    setIsSubmitting(true);
     setPlanError(null);
     const exerciseData = await createPlan(payload);
     setPlan(exerciseData);
@@ -196,6 +199,8 @@ export default function WorkoutPlanPage() {
   } catch (err) {
     console.error("Error submitting form:", err);
     setPlanError("We could not generate a plan. Please try again.");
+  } finally {
+    setIsSubmitting(false);
   }
 };
 
@@ -430,10 +435,12 @@ export default function WorkoutPlanPage() {
         )}
         <div className="flex justify-end">
           <button
-            className="rounded-full bg-emerald-500 px-6 py-2 text-sm font-semibold text-black"
+            className="flex items-center justify-center gap-2 rounded-full bg-emerald-500 px-6 py-2 text-sm font-semibold text-black transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
             onClick={submit}
+            disabled={isSubmitting}
           >
-            Submit
+            {isSubmitting && <Spinner className="size-4" />}
+            {isSubmitting ? "Generating..." : "Submit"}
           </button>
         </div>
           </>

@@ -1,15 +1,27 @@
 {
   "records": [
     {
+      "date": "2026-01-23",
+      "exercise": "Level 1: Visual Tracking",
+      "score": 30,
+      "notes": "gregor"
+    },
+    {
       "date": "2026-01-24",
       "exercise": "hand-eye",
       "score": 10,
       "notes": "gregor"
     },
     {
+      "date": "2026-01-25",
+      "exercise": "hand-eye",
+      "score": 50,
+      "notes": "gregor"
+    },
+    {
       "date": "2026-01-25T05:42:29.661Z",
       "exercise": "Level 1: Visual Tracking",
-      "score": 100,
+      "score": 70,
       "notes": ""
     }
   ],
@@ -32,7 +44,7 @@
       "rest_time": 20,
       "target_size": null,
       "num_targets": null,
-      "days": 3
+      "days": 4
     },
     {
       "exercise": "Level 2 \u2013 Direction & Accuracy",
@@ -52,7 +64,7 @@
       "rest_time": 10,
       "target_size": null,
       "num_targets": null,
-      "days": 4
+      "days": 5
     },
     {
       "exercise": "Level 4 \u2013 Eye + Reaction",
@@ -72,7 +84,7 @@
       "rest_time": 10,
       "target_size": null,
       "num_targets": null,
-      "days": 5
+      "days": 6
     },
     {
       "exercise": "Level 6 \u2013 Functional (Advanced)",
