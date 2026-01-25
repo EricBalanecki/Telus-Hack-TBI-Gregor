@@ -121,6 +121,7 @@ export default function ExercisesPage() {
       title: "Level 1: Motor Control",
       difficulty: "Easy",
       imageLabel: "Motor control target practice",
+      imageSrc: "/exercises/lasersc.png",
       href: "/exercises/motorskills",
       parts: ["Pointer alignment and steady control"],
       benefits: ["Improves hand-eye coordination", "Builds steadiness"],
@@ -286,7 +287,19 @@ export default function ExercisesPage() {
                     <CardContent className="space-y-4">
                       <div className="relative h-36 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950/50">
                         <div className="flex h-full w-full items-center justify-center text-xs text-zinc-500">
-                          {exercise.imageLabel}
+                        {exercise.imageSrc ? (
+                        <Image
+                          src={exercise.imageSrc}
+                          alt={exercise.imageLabel}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          className={`object-cover object-top ${exercise.imagePosition ?? ""}`}
+                        />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-xs text-zinc-500">
+                            {exercise.imageLabel}
+                          </div>
+                        )}
                         </div>
                       </div>
                       <div className="space-y-2 text-sm text-zinc-200">
