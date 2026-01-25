@@ -1,0 +1,28 @@
+from openai import OpenAI
+import os
+
+from schemas import BaseInput
+from prompt_builder import build_base_exercise_prompt
+
+API_KEY = os.getenv("API_KEY")
+if not API_KEY:
+    raise RuntimeError("API_KEY not set")
+
+MODEL_NAME = "google/gemma-3-27b-it"
+BASE_URL = "https://gemma-3-27b-3ca9s.paas.ai.telus.com/v1"
+
+client = OpenAI(api_key="dc8704d41888afb2b889a8ebac81d12f", base_url=BASE_URL)
+
+def get_base_exercise(input: BaseInput):
+    prompt = build_base_exercise_prompt(input)
+
+    print(prompt)
+
+    response = client.completions.create(
+        model=MODEL_NAME,
+        prompt=prompt,
+        max_tokens=200,
+        temperature=0.2
+    )
+
+    return response.choices[0].text.strip()

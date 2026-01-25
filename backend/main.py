@@ -1,7 +1,11 @@
 from fastapi import FastAPI, Request
-from pydantic import BaseModel
-from json_service import add_record, get_records
 from fastapi.middleware.cors import CORSMiddleware
+
+from exercises import EXERCISES
+from schemas import BaseInput, RecordInput
+from llm_client import get_base_exercise
+from json_service import add_record, get_records
+
 
 app = FastAPI()
 
@@ -32,22 +36,23 @@ async def mcp_endpoint(request: Request):
     else:
         return {"error": f"Unknown tool {tool_name}"}
     
+@app.post("/base-exercise")
+def generate_exercise(data: BaseInput):
+    name = get_base_exercise(data)
 
+    if name not in EXERCISES:
+        return {
+            "error": "Unknown exercise returned by model",
+            "model_output": name
+        }
 
-# for testing 
-
-# records endpoints
-class Record(BaseModel):
-    date: str
-    exercise: str
-    score: int
-    notes: str
-
+    return EXERCISES[name]
+    
 @app.get("/records")
 def read_records():
     return get_records()
 
 
 @app.post("/records")
-def create_record(record: Record):
+def create_record(record: RecordInput):
     return add_record(record.model_dump())
