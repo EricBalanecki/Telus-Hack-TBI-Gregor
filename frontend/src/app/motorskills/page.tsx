@@ -8,6 +8,8 @@ import { useRequestDevice } from "react-web-bluetooth";
 import { BluetoothRemoteGATTCharacteristic } from 'web-bluetooth';
 import { useFrame } from "@react-three/fiber";
 import * as THREE from "three";
+import { useGLTF } from "@react-three/drei";
+
 
 
 export default function PhysicalDevice() {
@@ -67,27 +69,32 @@ export default function PhysicalDevice() {
 				<Canvas camera={{ position: [0, 0, 5], fov: 60 }} className="h-screen w-screen">
 					<ambientLight intensity={0.5} />
 					<directionalLight position={[5, 5, 5]} intensity={1} />
-					<RotatingBox quatRef={quatRef} />
+					<RotatingLP quatRef={quatRef} />
 					<OrbitControls />
-					<axesHelper args={[5]} /> 
+					<axesHelper args={[5]} />
 				</Canvas>
 			</div>
 		</div>
 	);
 };
 
-function RotatingBox({ quatRef }: { quatRef: React.MutableRefObject<[number, number, number, number]> }) {
+function RotatingLP({ quatRef }: { quatRef: React.MutableRefObject<[number, number, number, number]> }) {
 	const meshRef = useRef<THREE.Mesh>(null!);
 
 	useFrame(() => {
 		const [x, y, z, w] = quatRef.current;
-		meshRef.current.quaternion.set(z, -y, x, w);
+		meshRef.current.quaternion.set(-y, -x, z, w);
 	});
 
 	return (
 		<mesh ref={meshRef}>
-			<boxGeometry args={[1, 1, 1]} />
+			<LaserPointer />
 			<meshStandardMaterial color="orange" />
 		</mesh>
 	);
+}
+
+function LaserPointer() {
+	const { scene } = useGLTF("/scene.gltf");
+	return <primitive object={scene} scale={0.005} />;
 }
