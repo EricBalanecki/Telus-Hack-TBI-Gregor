@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -11,7 +12,17 @@ import {
 } from "@/components/ui/card";
 
 export default function ExercisesPage() {
-  const visualExercises = [
+  const [activeTab, setActiveTab] = useState<"visual" | "motor">("visual");
+  const visualExercises: Array<{
+    id: string;
+    title: string;
+    difficulty: "Easy" | "Medium" | "Hard";
+    imageLabel: string;
+    imageSrc?: string;
+    href?: string;
+    parts: string[];
+    benefits?: string[];
+  }> = [
     {
       id: "level-1-visual-tracking",
       title: "Level 1: Visual Tracking",
@@ -44,6 +55,62 @@ export default function ExercisesPage() {
         "Trains attention shifting",
       ],
     },
+    {
+      id: "level-3-distractors-control",
+      title: "Level 3: Distractors & Control",
+      difficulty: "Medium",
+      imageLabel: "Focus with moving distractors",
+      parts: [
+        "Follow the Red Dot",
+        "Stay on Target",
+      ],
+      benefits: [
+        "Improves stability and focus",
+        "Trains selective attention",
+      ],
+    },
+    {
+      id: "level-4-eye-reaction",
+      title: "Level 4: Eye + Reaction",
+      difficulty: "Hard",
+      imageLabel: "Reaction speed and gaze triggers",
+      parts: [
+        "Look to Trigger",
+        "Gaze Simon Says",
+      ],
+      benefits: [
+        "Improves reaction speed",
+        "Builds motor planning",
+      ],
+    },
+    {
+      id: "level-5-eye-thinking",
+      title: "Level 5: Eye + Thinking",
+      difficulty: "Hard",
+      imageLabel: "Cognitive + gaze integration",
+      parts: [
+        "Look at the Correct Answer",
+        "Color or Shape Rule",
+      ],
+      benefits: [
+        "Strengthens decision making",
+        "Trains inhibition and control",
+      ],
+    },
+    {
+      id: "level-6-functional-advanced",
+      title: "Level 6: Functional (Advanced)",
+      difficulty: "Hard",
+      imageLabel: "Functional scanning and reading",
+      parts: [
+        "Visual Search",
+        "Reading-Style Tracking",
+      ],
+      benefits: [
+        "Improves scanning and sequencing",
+        "Supports reading rehab",
+      ],
+    },
   ];
 
   const motorExercises = [
@@ -60,7 +127,7 @@ export default function ExercisesPage() {
 
   return (
     <div className="min-h-screen text-white">
-      <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-6 px-6 py-12 text-left">
+      <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-8 px-6 py-14 text-left">
         <h1 className="text-3xl font-semibold tracking-tight">Eye Exercises</h1>
         <p className="text-base text-zinc-300">Follow the exercises below.</p>
         <div className="flex flex-wrap items-center gap-3">
@@ -79,134 +146,171 @@ export default function ExercisesPage() {
         </div>
         <section className="space-y-6">
           <div>
-            <h2 className="text-xl font-semibold text-white">
-              Visual Exercises
-            </h2>
-            <p className="text-sm text-zinc-400">
-              Eye tracking and attention-focused activities.
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                  activeTab === "visual"
+                    ? "bg-emerald-500 text-black"
+                    : "border border-zinc-700 text-zinc-200 hover:border-emerald-400/60"
+                }`}
+                type="button"
+                onClick={() => setActiveTab("visual")}
+              >
+                Visual Exercises
+              </button>
+              <button
+                className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                  activeTab === "motor"
+                    ? "bg-emerald-500 text-black"
+                    : "border border-zinc-700 text-zinc-200 hover:border-emerald-400/60"
+                }`}
+                type="button"
+                onClick={() => setActiveTab("motor")}
+              >
+                Motor Control Exercises
+              </button>
+            </div>
+            <p className="mt-2 text-sm text-zinc-400">
+              {activeTab === "visual"
+                ? "Eye tracking and attention-focused activities."
+                : "Device-based exercises focused on control and steadiness."}
             </p>
           </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            {visualExercises.map((exercise) => (
-              <Link key={exercise.id} href={exercise.href} className="block">
-                <Card className="border-zinc-800 bg-zinc-900/60 transition hover:border-emerald-400/60 hover:bg-zinc-900">
-                  <CardHeader>
-                    <div className="flex items-start justify-between gap-4">
-                      <CardTitle className="text-xl text-white">
-                        {exercise.title}
-                      </CardTitle>
-                      <span
-                        className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                          exercise.difficulty === "Medium"
-                            ? "bg-orange-400/20 text-orange-200"
-                            : exercise.difficulty === "Hard"
-                            ? "bg-red-500/20 text-red-200"
-                            : "bg-emerald-400/20 text-emerald-200"
-                        }`}
-                      >
-                        {exercise.difficulty}
-                      </span>
+          {activeTab === "visual" ? (
+            <div className="grid gap-6 md:grid-cols-3">
+              {visualExercises.map((exercise) => {
+                const card = (
+                  <Card
+                    className={`border-zinc-800 bg-zinc-900/60 transition ${
+                      exercise.href
+                        ? "hover:border-emerald-400/60 hover:bg-zinc-900"
+                        : "opacity-80"
+                    }`}
+                  >
+                    <CardHeader>
+                      <div className="flex items-start justify-between gap-4">
+                        <CardTitle className="text-xl text-white">
+                          {exercise.title}
+                        </CardTitle>
+                        <span
+                          className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                            exercise.difficulty === "Medium"
+                              ? "bg-orange-400/20 text-orange-200"
+                              : exercise.difficulty === "Hard"
+                              ? "bg-red-500/20 text-red-200"
+                              : "bg-emerald-400/20 text-emerald-200"
+                          }`}
+                        >
+                          {exercise.difficulty}
+                        </span>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="relative h-36 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950/50">
+                        {exercise.imageSrc ? (
+                          <Image
+                            src={exercise.imageSrc}
+                            alt={exercise.imageLabel}
+                            fill
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-xs text-zinc-500">
+                            {exercise.imageLabel}
+                          </div>
+                        )}
+                      </div>
+                      <div className="space-y-2 text-sm text-zinc-200">
+                        <p className="font-semibold text-white">Parts</p>
+                        <ul className="list-disc space-y-1 pl-5 text-zinc-300">
+                          {exercise.parts.map((part) => (
+                            <li key={part}>{part}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      {exercise.benefits && (
+                        <div className="space-y-2 text-sm text-zinc-200">
+                          <p className="font-semibold text-white">Benefits</p>
+                          <ul className="list-disc space-y-1 pl-5 text-zinc-300">
+                            {exercise.benefits.map((benefit) => (
+                              <li key={benefit}>{benefit}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                );
+
+                if (!exercise.href) {
+                  return (
+                    <div key={exercise.id} className="block">
+                      {card}
                     </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="relative h-32 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950/50">
-                      {exercise.imageSrc ? (
-                        <Image
-                          src={exercise.imageSrc}
-                          alt={exercise.imageLabel}
-                          fill
-                          sizes="(max-width: 768px) 100vw, 50vw"
-                          className="object-cover"
-                        />
-                      ) : (
+                  );
+                }
+
+                return (
+                  <Link key={exercise.id} href={exercise.href} className="block">
+                    {card}
+                  </Link>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-3">
+              {motorExercises.map((exercise) => (
+                <Link key={exercise.id} href={exercise.href} className="block">
+                  <Card className="border-zinc-800 bg-zinc-900/60 transition hover:border-emerald-400/60 hover:bg-zinc-900">
+                    <CardHeader>
+                      <div className="flex items-start justify-between gap-4">
+                        <CardTitle className="text-xl text-white">
+                          {exercise.title}
+                        </CardTitle>
+                        <span
+                          className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                            exercise.difficulty === "Medium"
+                              ? "bg-orange-400/20 text-orange-200"
+                              : exercise.difficulty === "Hard"
+                              ? "bg-red-500/20 text-red-200"
+                              : "bg-emerald-400/20 text-emerald-200"
+                          }`}
+                        >
+                          {exercise.difficulty}
+                        </span>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="relative h-36 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950/50">
                         <div className="flex h-full w-full items-center justify-center text-xs text-zinc-500">
                           {exercise.imageLabel}
                         </div>
+                      </div>
+                      <div className="space-y-2 text-sm text-zinc-200">
+                        <p className="font-semibold text-white">Parts</p>
+                        <ul className="list-disc space-y-1 pl-5 text-zinc-300">
+                          {exercise.parts.map((part) => (
+                            <li key={part}>{part}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      {exercise.benefits && (
+                        <div className="space-y-2 text-sm text-zinc-200">
+                          <p className="font-semibold text-white">Benefits</p>
+                          <ul className="list-disc space-y-1 pl-5 text-zinc-300">
+                            {exercise.benefits.map((benefit) => (
+                              <li key={benefit}>{benefit}</li>
+                            ))}
+                          </ul>
+                        </div>
                       )}
-                    </div>
-                    <div className="space-y-2 text-sm text-zinc-200">
-                      <p className="font-semibold text-white">Parts</p>
-                      <ul className="list-disc space-y-1 pl-5 text-zinc-300">
-                        {exercise.parts.map((part) => (
-                          <li key={part}>{part}</li>
-                        ))}
-                      </ul>
-                    </div>
-                    {exercise.benefits && (
-                      <div className="space-y-2 text-sm text-zinc-200">
-                        <p className="font-semibold text-white">Benefits</p>
-                        <ul className="list-disc space-y-1 pl-5 text-zinc-300">
-                          {exercise.benefits.map((benefit) => (
-                            <li key={benefit}>{benefit}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
-
-          <div>
-            <h2 className="text-xl font-semibold text-white">
-              Motor Control Exercises
-            </h2>
-            <p className="text-sm text-zinc-400">
-              Device-based exercises focused on control and steadiness.
-            </p>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2">
-            {motorExercises.map((exercise) => (
-              <Link key={exercise.id} href={exercise.href} className="block">
-                <Card className="border-zinc-800 bg-zinc-900/60 transition hover:border-emerald-400/60 hover:bg-zinc-900">
-                  <CardHeader>
-                    <div className="flex items-start justify-between gap-4">
-                      <CardTitle className="text-xl text-white">
-                        {exercise.title}
-                      </CardTitle>
-                      <span
-                        className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                          exercise.difficulty === "Medium"
-                            ? "bg-orange-400/20 text-orange-200"
-                            : exercise.difficulty === "Hard"
-                            ? "bg-red-500/20 text-red-200"
-                            : "bg-emerald-400/20 text-emerald-200"
-                        }`}
-                      >
-                        {exercise.difficulty}
-                      </span>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="relative h-32 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950/50">
-                      <div className="flex h-full w-full items-center justify-center text-xs text-zinc-500">
-                        {exercise.imageLabel}
-                      </div>
-                    </div>
-                    <div className="space-y-2 text-sm text-zinc-200">
-                      <p className="font-semibold text-white">Parts</p>
-                      <ul className="list-disc space-y-1 pl-5 text-zinc-300">
-                        {exercise.parts.map((part) => (
-                          <li key={part}>{part}</li>
-                        ))}
-                      </ul>
-                    </div>
-                    {exercise.benefits && (
-                      <div className="space-y-2 text-sm text-zinc-200">
-                        <p className="font-semibold text-white">Benefits</p>
-                        <ul className="list-disc space-y-1 pl-5 text-zinc-300">
-                          {exercise.benefits.map((benefit) => (
-                            <li key={benefit}>{benefit}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
-          </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          )}
         </section>
       </main>
     </div>
