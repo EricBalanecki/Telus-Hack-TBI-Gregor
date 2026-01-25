@@ -224,7 +224,7 @@ export default function ExercisesPage() {
 
       {smoothedGazePoint && (
         <div
-          className="pointer-events-none fixed h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]"
+          className="pointer-events-none fixed z-50 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]"
           style={clampToViewport(smoothedGazePoint)}
           aria-hidden="true"
         />

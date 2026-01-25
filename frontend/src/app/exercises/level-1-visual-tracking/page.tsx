@@ -311,7 +311,7 @@ export default function LevelOneVisualTracking() {
 
       {isRunning && targetPoint && (
         <div
-          className="pointer-events-none fixed h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-400 shadow-[0_0_16px_rgba(251,191,36,0.9)]"
+          className="pointer-events-none fixed z-40 h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-400 shadow-[0_0_16px_rgba(251,191,36,0.9)]"
           style={clampToViewport(targetPoint)}
           aria-hidden="true"
         />
@@ -319,7 +319,7 @@ export default function LevelOneVisualTracking() {
 
       {smoothedGazePoint && (
         <div
-          className="pointer-events-none fixed h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-400/90 shadow-[0_0_10px_rgba(52,211,153,0.7)]"
+          className="pointer-events-none fixed z-50 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-400/90 shadow-[0_0_10px_rgba(52,211,153,0.7)]"
           style={clampToViewport(smoothedGazePoint)}
           aria-hidden="true"
         />
