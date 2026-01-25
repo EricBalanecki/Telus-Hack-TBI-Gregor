@@ -29,7 +29,6 @@ export default function HeartRateOverlay({
   const [dismissWarning, setDismissWarning] = useState<string | null>(null);
   const deviceRef = useRef<BluetoothDeviceLike | null>(null);
   const abortRef = useRef<AbortController | null>(null);
-  const samplesRef = useRef<number[]>([]);
   const calibrationRef = useRef<number[]>([]);
   const calibrationTimerRef = useRef<number | null>(null);
   const restingRateRef = useRef<number | null>(null);
@@ -128,7 +127,7 @@ export default function HeartRateOverlay({
           }
 
           if (restingRateRef.current !== null) {
-            const isAboveResting = bpm >= restingRateRef.current + 15;
+            const isAboveResting = bpm >= restingRateRef.current +20;
             if (isAboveResting && (!alertUntilRef.current || now > alertUntilRef.current)) {
               setAlertUntil(now + 15 * 60 * 1000);
               setShowBreakAlert(true);
@@ -371,13 +370,6 @@ export default function HeartRateOverlay({
                 type="button"
               >
                 Dismiss
-              </button>
-              <button
-                className="rounded-full border border-amber-300/40 px-2 py-0.5 text-[10px] uppercase tracking-[0.2em] text-amber-100 hover:border-amber-200"
-                onClick={startCalibration}
-                type="button"
-              >
-                Recalibrate
               </button>
             </div>
                 </div>

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createRecord, getLatestScore } from "@/api/records";
 
 type GazePoint = {
   x: number;
@@ -36,7 +37,6 @@ const PHASES: ExercisePhase[] = [
 ];
 
 const EXERCISE_NAME = "Level 1: Visual Tracking";
-const RECORDS_ENDPOINT = "http://localhost:8000/records";
 
 const DOT_RADIUS = 12;
 const SMOOTHING_ALPHA = 0.15;
@@ -95,25 +95,10 @@ export default function LevelOneVisualTracking() {
 
     const loadLatestScore = async () => {
       try {
-        const response = await fetch(RECORDS_ENDPOINT);
-        if (!response.ok) {
-          return;
+        const latest = await getLatestScore(EXERCISE_NAME);
+        if (latest !== null) {
+          setLatestScore(latest);
         }
-        const records = (await response.json()) as Array<{
-          date: string;
-          exercise: string;
-          score: number;
-        }>;
-        const matching = records.filter(
-          (record) => record.exercise === EXERCISE_NAME,
-        );
-        if (matching.length === 0) {
-          return;
-        }
-        const latest = matching.sort((a, b) =>
-          a.date < b.date ? 1 : -1,
-        )[0];
-        setLatestScore(latest.score);
       } catch (error) {
         console.error("Failed to load latest score", error);
       }
@@ -238,15 +223,11 @@ export default function LevelOneVisualTracking() {
     setIsRunning(false);
 
     try {
-      await fetch(RECORDS_ENDPOINT, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          date: new Date().toISOString(),
-          exercise: EXERCISE_NAME,
-          score: accuracyScore,
-          notes: "",
-        }),
+      await createRecord({
+        date: new Date().toISOString(),
+        exercise: EXERCISE_NAME,
+        score: accuracyScore,
+        notes: "",
       });
     } catch (error) {
       console.error("Failed to save score", error);

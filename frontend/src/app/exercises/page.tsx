@@ -151,6 +151,25 @@ export default function ExercisesPage() {
         "Follow the Dot (vertical)",
         "Circle Path",
       ],
+      benefits: [
+        "Rebuilds eye movement control",
+        "Very low cognitive load",
+      ],
+    },
+    {
+      id: "level-2-direction-accuracy",
+      title: "Level 2: Direction & Accuracy",
+      difficulty: "Medium",
+      imageLabel: "Direction and accuracy targets",
+      href: "/exercises/level-2-direction-accuracy",
+      parts: [
+        "Random Target Jump",
+        "Choose the Highlighted Target",
+      ],
+      benefits: [
+        "Trains quick refocus",
+        "Trains attention shifting",
+      ],
     },
   ];
 
@@ -193,20 +212,34 @@ export default function ExercisesPage() {
                     <CardTitle className="text-xl text-white">
                       {exercise.title}
                     </CardTitle>
-                    <span className="rounded-full bg-emerald-400/20 px-3 py-1 text-xs font-semibold text-emerald-200">
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                        exercise.difficulty === "Medium"
+                          ? "bg-orange-400/20 text-orange-200"
+                          : exercise.difficulty === "Hard"
+                          ? "bg-red-500/20 text-red-200"
+                          : "bg-emerald-400/20 text-emerald-200"
+                      }`}
+                    >
                       {exercise.difficulty}
                     </span>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="relative h-32 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950/50">
-                    <Image
-                      src={exercise.imageSrc}
-                      alt={exercise.imageLabel}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                      className="object-cover"
-                    />
+                    {exercise.imageSrc ? (
+                      <Image
+                        src={exercise.imageSrc}
+                        alt={exercise.imageLabel}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center text-xs text-zinc-500">
+                        {exercise.imageLabel}
+                      </div>
+                    )}
                   </div>
                   <div className="space-y-2 text-sm text-zinc-200">
                     <p className="font-semibold text-white">Parts</p>
@@ -216,6 +249,16 @@ export default function ExercisesPage() {
                       ))}
                     </ul>
                   </div>
+                {exercise.benefits && (
+                  <div className="space-y-2 text-sm text-zinc-200">
+                    <p className="font-semibold text-white">Benefits</p>
+                    <ul className="list-disc space-y-1 pl-5 text-zinc-300">
+                      {exercise.benefits.map((benefit) => (
+                        <li key={benefit}>{benefit}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
                 </CardContent>
               </Card>
             </Link>
