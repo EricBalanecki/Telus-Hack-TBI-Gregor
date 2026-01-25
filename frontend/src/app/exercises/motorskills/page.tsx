@@ -8,6 +8,7 @@ import { useRequestDevice } from "react-web-bluetooth";
 import { BluetoothRemoteGATTCharacteristic } from "web-bluetooth";
 import * as THREE from "three";
 import { PCA } from "ml-pca";
+import { createRecord } from "@/api/records";
 
 export default function PhysicalDevice({
 	targetSize = 2,
@@ -65,6 +66,17 @@ export default function PhysicalDevice({
 		};
 	}, [device]);
 
+	useEffect(() => {
+		if (targetsHit >= targetsHitTarget) {
+			createRecord({
+				date: Date.now().toString(),
+				exercise: "Laser Game",
+				score: score / targetsHitTarget,
+				notes: ""
+			});
+		}
+	}, [targetsHit]);
+
 	return (
 		<div className="relative min-h-screen bg-zinc-950 text-white">
 			<div className="absolute inset-0">
@@ -72,8 +84,9 @@ export default function PhysicalDevice({
 					<Canvas className="h-screen w-screen">
 						<PerspectiveCamera
 							makeDefault
-							position={[0, 5, 10]}
+							position={[0, 4, -13]}
 							fov={60}
+							rotation={[0.1, Math.PI, 0]}
 						/>
 						<ambientLight intensity={0.5} />
 						<directionalLight position={[5, 5, 5]} intensity={1} />
@@ -87,7 +100,7 @@ export default function PhysicalDevice({
 							targetsHit={targetsHit}
 							setTargetsHit={setTargetsHit}
 						/>
-						<OrbitControls />
+						{/* <OrbitControls /> */}
 						<mesh ref={wallRef} rotation={[0.0, 0.0, 0]}>
 							<boxGeometry args={[-30, 30, 30]} />
 							<meshStandardMaterial color="blue" />
@@ -130,11 +143,10 @@ export default function PhysicalDevice({
 							)}
 							<div className="flex flex-wrap items-center gap-2">
 								<button
-									className={`rounded-full px-4 py-1.5 text-xs font-semibold ${
-										device
-											? "bg-emerald-500 text-black"
-											: "border border-zinc-700 text-zinc-500"
-									}`}
+									className={`rounded-full px-4 py-1.5 text-xs font-semibold ${device
+										? "bg-emerald-500 text-black"
+										: "border border-zinc-700 text-zinc-500"
+										}`}
 									onClick={() => {
 										if (!device) {
 											return;
@@ -289,7 +301,7 @@ function LaserScene({
 			const pca = new PCA(points3D);
 			const ev = pca.getExplainedVariance();
 			const linearity = ev[0] / (ev[0] + ev[1] + ev[2]);
-			setScore(score + Math.pow(linearity, 4));
+			setScore(score + Math.pow(linearity, 7));
 			setTargetsHit(targetsHit + 1);
 		}
 
