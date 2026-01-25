@@ -41,8 +41,11 @@ def get_coach_response(messages: list[ChatMessage], db: dict):
 
     response = call_llm(prompt)
     if response:
-        return response
+        return response.lstrip().removeprefix("ASSISTANT:").removeprefix("assistant:").strip()
 
     # Retry once with a stronger instruction to avoid empty responses.
     retry_prompt = f"{prompt}\n\nIMPORTANT: Return a non-empty response."
-    return call_llm(retry_prompt)
+    retry_response = call_llm(retry_prompt)
+    if retry_response:
+        return retry_response.lstrip().removeprefix("ASSISTANT:").removeprefix("assistant:").strip()
+    return retry_response

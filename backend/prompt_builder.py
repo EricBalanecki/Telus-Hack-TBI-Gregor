@@ -92,6 +92,7 @@ Format requirements:
 - Plain text only (no markdown, no backticks, no bold/italics).
 - If giving steps, use a simple numbered list like "1) ...".
 - Keep responses concise and supportive.
+- Do not include role labels like "ASSISTANT:" or "USER:".
 
 User records (JSON):
 {records_json}
