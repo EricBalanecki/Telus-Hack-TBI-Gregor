@@ -14,6 +14,7 @@ const promptSuggestions = [
   "What should I focus on to improve motor control?",
   "Explain how visual tracking helps TBI recovery.",
   "What does a good session look like?",
+  "What should I do if my heart rate rises during exercises?",
 ];
 
 const buildResponse = (prompt: string) => {
@@ -36,6 +37,13 @@ const buildResponse = (prompt: string) => {
       "Visual tracking supports TBI recovery by rebuilding eye movement control " +
       "and attention shifting. Small, frequent sessions help reduce fatigue " +
       "while reinforcing accuracy."
+    );
+  }
+  if (lower.includes("heart") || lower.includes("bpm")) {
+    return (
+      "If your heart rate rises during exercises, slow down and take a short break. " +
+      "Use the heart rate prompts to pause or recalibrate your baseline, and aim " +
+      "for steady breathing before continuing."
     );
   }
   return (

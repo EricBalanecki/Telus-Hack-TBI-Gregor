@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Activity, Brain, Eye, Gauge, Hand, Sparkles } from "lucide-react";
+import { Activity, Brain, Eye, Gauge, Hand, HeartPulse, Sparkles } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { fetchRecords, RecordEntry } from "@/api/records";
 import { LineChartCard, LineChartPoint } from "@/components/charts/linechart";
@@ -82,10 +82,13 @@ export default function Home() {
     <div className="relative min-h-screen text-white">
       <main className="mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-10 px-6 pb-16 pt-12 text-left">
         <section className="flex flex-col gap-6 text-left">
-          <div className="flex justify-center">
-            <h1 className="rounded-full border border-white/10 bg-[#0a0a0f]/80 px-6 py-3 text-center text-3xl font-semibold tracking-tight text-white shadow-lg shadow-emerald-500/10 backdrop-blur">
-              TBI Motor Recovery
+          <div className="flex flex-col items-center text-center">
+            <h1 className="text-4xl font-semibold tracking-tight text-white">
+              TBI Motor
             </h1>
+            <span className="mt-2 text-xs uppercase tracking-[0.4em] text-zinc-400">
+              Recovery
+            </span>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {[
@@ -105,11 +108,6 @@ export default function Home() {
                 icon: Sparkles,
               },
               {
-                title: "What you see",
-                text: "Simple progress snapshots so you can notice small improvements.",
-                icon: Gauge,
-              },
-              {
                 title: "How it fits",
                 text: "Short exercises that can be repeated daily without cognitive overload.",
                 icon: Eye,
@@ -118,6 +116,11 @@ export default function Home() {
                 title: "Why it works",
                 text: "Consistent practice builds stability, accuracy, and confidence over time.",
                 icon: Brain,
+              },
+              {
+                title: "Why it's safe",
+                text: "Live heart rate tracking helps avoid overexertion and encourages timely breaks.",
+                icon: HeartPulse,
               },
             ].map((item) => (
               <div
