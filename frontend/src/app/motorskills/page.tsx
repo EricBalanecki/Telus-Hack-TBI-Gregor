@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Box } from "@react-three/drei";
+import { OrbitControls, Box, Sphere } from "@react-three/drei";
 import { useRequestDevice } from "react-web-bluetooth";
 import { BluetoothRemoteGATTCharacteristic } from 'web-bluetooth';
 import { useFrame } from "@react-three/fiber";
@@ -191,3 +191,29 @@ function LaserPointer() {
 	return <primitive object={scene} scale={0.005} rotation={[0, Math.PI / 2, 0]} />;
 }
 
+// TODO MOVE ME 
+export function Target({ position, onHit }: {
+	position: [number, number, number];
+	onHit: () => void;
+}) {
+	const ref = useRef<THREE.Mesh>(null);
+
+	// Optional pulsing animation
+	useFrame(({ clock }) => {
+		if (ref.current) {
+			const scale = 1 + 0.1 * Math.sin(clock.elapsedTime * 5);
+			ref.current.scale.setScalar(scale);
+		}
+	});
+
+	return (
+		<Sphere
+			ref={ref}
+			args={[0.2, 32, 32]}
+			position={position}
+			onClick={onHit} // Simple pointer click detection
+		>
+			<meshStandardMaterial color="red" />
+		</Sphere>
+	);
+}
