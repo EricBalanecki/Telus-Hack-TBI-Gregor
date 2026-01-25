@@ -96,8 +96,110 @@ export default function PhysicalDevice({
 			</div>
 
 
-			{started && <></> /* TODO: Add a start page */}
-			{(targetsHit >= targetsHitTarget) && <></> /* TODO: Add centered "go back" page */}
+			{!started && (
+				<div className="pointer-events-none fixed left-1/2 top-1/2 z-30 w-[320px] -translate-x-1/2 -translate-y-1/2">
+					<div className="pointer-events-auto rounded-2xl border border-zinc-800 bg-zinc-950/80 p-4 text-sm text-zinc-200 shadow-lg backdrop-blur">
+						<div className="flex items-start justify-between gap-3">
+							<div>
+								<h1 className="text-base font-semibold text-white">
+									Level 1: Motor Control
+								</h1>
+								<p className="text-xs text-zinc-400">
+									Align the pointer and hit targets with steady control.
+								</p>
+							</div>
+							<Link
+								className="rounded-full border border-zinc-600 px-3 py-1 text-xs font-semibold text-white"
+								href="/exercises"
+							>
+								Back
+							</Link>
+						</div>
+
+						<div className="mt-3 flex flex-wrap items-center gap-2">
+							<span className="rounded-full bg-zinc-800 px-3 py-1 text-xs text-zinc-200">
+								Targets: {targetsHitTarget}
+							</span>
+						</div>
+
+						<div className="mt-3 flex flex-col gap-2">
+							{!device && (
+								<div className="rounded-xl border border-amber-400/40 bg-amber-500/10 px-3 py-2 text-xs text-amber-100">
+									Connect accessibility remote to start.
+								</div>
+							)}
+							<div className="flex flex-wrap items-center gap-2">
+								<button
+									className={`rounded-full px-4 py-1.5 text-xs font-semibold ${
+										device
+											? "bg-emerald-500 text-black"
+											: "border border-zinc-700 text-zinc-500"
+									}`}
+									onClick={() => {
+										if (!device) {
+											return;
+										}
+										setStarted(true);
+									}}
+									disabled={!device}
+									type="button"
+								>
+									Start
+								</button>
+								{!device && (
+									<button
+										onClick={onClick}
+										className="rounded-full border border-zinc-700 px-3 py-1 text-xs text-zinc-100 hover:border-emerald-400 hover:text-emerald-200"
+										type="button"
+									>
+										Connect
+									</button>
+								)}
+							</div>
+						</div>
+					</div>
+				</div>
+			)}
+
+			{started && targetsHit >= targetsHitTarget && (
+				<div className="pointer-events-none fixed left-1/2 top-1/2 z-30 w-[320px] -translate-x-1/2 -translate-y-1/2">
+					<div className="pointer-events-auto rounded-2xl border border-zinc-800 bg-zinc-950/80 p-4 text-sm text-zinc-200 shadow-lg backdrop-blur">
+						<div className="flex items-start justify-between gap-3">
+							<div>
+								<h1 className="text-base font-semibold text-white">
+									Session complete
+								</h1>
+								<p className="text-xs text-zinc-400">
+									Nice work. You hit {targetsHit} targets.
+								</p>
+							</div>
+							<Link
+								className="rounded-full border border-zinc-600 px-3 py-1 text-xs font-semibold text-white"
+								href="/exercises"
+							>
+								Back
+							</Link>
+						</div>
+
+						<div className="mt-3 flex flex-wrap items-center gap-2">
+							<span className="rounded-full bg-zinc-800 px-3 py-1 text-xs text-zinc-200">
+								Score: {score.toFixed(2)}
+							</span>
+							<button
+								className="rounded-full bg-emerald-500 px-4 py-1.5 text-xs font-semibold text-black"
+								onClick={() => {
+									setScore(0);
+									setTargetsHit(0);
+									setStarted(true);
+								}}
+								type="button"
+							>
+								Run again
+							</button>
+						</div>
+					</div>
+				</div>
+			)}
 
 			<div className="absolute left-5 top-5 z-20 w-[240px] rounded-2xl border border-zinc-800 bg-zinc-950/80 px-4 py-3 text-sm text-white shadow-lg backdrop-blur">
 				<div className="text-xs uppercase tracking-[0.2em] text-zinc-400">
