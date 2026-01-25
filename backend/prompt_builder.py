@@ -15,6 +15,8 @@ You are helping select and configure a therapy exercise for a user in TBI rehab.
 
 Motor skill level: {input.motor_level} (1 = easiest, 10 = hardest)
 Visual skill level: {input.visual_level} (1 = easiest, 10 = hardest)
+Does the user get dizzy when tracking moving objects: {input.dizzy_tracking_movement}
+Does the user get tired quickly when using screens: {input.tired_using_screens}
 
 You are given a list of exercises. Each exercise has placeholders for numeric fields:
 - "dot_size": True = fill with a number from 1 (smallest) to 3 (largest), False = null
