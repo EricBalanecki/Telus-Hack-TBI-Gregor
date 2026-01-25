@@ -79,6 +79,7 @@ export default function LevelOneVisualTracking() {
   const [restSeconds, setRestSeconds] = useState(8);
   const [dotSizeScale, setDotSizeScale] = useState(2);
   const [speedScale, setSpeedScale] = useState(1);
+  const [restRemaining, setRestRemaining] = useState<number | null>(null);
 
   const webgazerRef = useRef<WebGazer | null>(null);
   const startTimeRef = useRef<number | null>(null);
@@ -235,6 +236,7 @@ export default function LevelOneVisualTracking() {
     setIsRunning(false);
     isRestingRef.current = false;
     restStartRef.current = null;
+    setRestRemaining(null);
 
     try {
       await createRecord({
@@ -256,6 +258,7 @@ export default function LevelOneVisualTracking() {
     resetScoring();
     isRestingRef.current = false;
     restStartRef.current = null;
+    setRestRemaining(null);
     startTimeRef.current = performance.now();
   };
 
@@ -276,9 +279,15 @@ export default function LevelOneVisualTracking() {
       if (isRestingRef.current) {
         const restStart = restStartRef.current ?? timestamp;
         const restElapsed = timestamp - restStart;
+        const remaining = Math.max(
+          0,
+          Math.ceil(restSeconds - restElapsed / 1000),
+        );
+        setRestRemaining(remaining);
         if (restElapsed >= restSeconds * 1000) {
           isRestingRef.current = false;
           restStartRef.current = null;
+          setRestRemaining(null);
           const nextIndex = phaseIndex + 1;
           setPhaseIndex(nextIndex);
           setStatus(`Running • ${PHASES[nextIndex].label}`);
@@ -305,6 +314,7 @@ export default function LevelOneVisualTracking() {
           restStartRef.current = timestamp;
           setStatus(`Resting • ${restSeconds}s`);
           setTargetPoint(null);
+          setRestRemaining(restSeconds);
         } else {
           finishRun();
           return;
@@ -447,6 +457,12 @@ export default function LevelOneVisualTracking() {
           }}
           aria-hidden="true"
         />
+      )}
+
+      {isRunning && restRemaining !== null && (
+        <div className="pointer-events-none fixed left-1/2 top-1/2 z-40 -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-zinc-800 bg-zinc-950/80 px-4 py-3 text-sm text-white shadow-lg backdrop-blur">
+          Resting... {restRemaining}s
+        </div>
       )}
 
       {smoothedGazePoint && (

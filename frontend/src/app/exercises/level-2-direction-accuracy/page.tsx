@@ -119,6 +119,7 @@ export default function LevelTwoDirectionAccuracy() {
   const [restSeconds, setRestSeconds] = useState(8);
   const [dotSizeScale, setDotSizeScale] = useState(2);
   const [speedScale, setSpeedScale] = useState(1);
+  const [restRemaining, setRestRemaining] = useState<number | null>(null);
 
   const webgazerRef = useRef<WebGazer | null>(null);
   const animationRef = useRef<number | null>(null);
@@ -312,6 +313,7 @@ export default function LevelTwoDirectionAccuracy() {
     setStatus(`Score ${combinedScore}%`);
     setScore(combinedScore);
     setIsRunning(false);
+    setRestRemaining(null);
 
     try {
       await createRecord({
@@ -334,6 +336,7 @@ export default function LevelTwoDirectionAccuracy() {
     resetMetrics();
     isRestingRef.current = false;
     restStartRef.current = null;
+    setRestRemaining(null);
     phaseStartRef.current = performance.now();
     startJumpTarget(phaseStartRef.current);
   };
@@ -354,9 +357,15 @@ export default function LevelTwoDirectionAccuracy() {
       if (isRestingRef.current) {
         const restStart = restStartRef.current ?? timestamp;
         const restElapsed = timestamp - restStart;
+        const remaining = Math.max(
+          0,
+          Math.ceil(restSeconds - restElapsed / 1000),
+        );
+        setRestRemaining(remaining);
         if (restElapsed >= restSeconds * 1000) {
           isRestingRef.current = false;
           restStartRef.current = null;
+          setRestRemaining(null);
           const nextIndex = phaseIndex + 1;
           setPhaseIndex(nextIndex);
           setStatus(`Running • ${PHASES[nextIndex].label}`);
@@ -431,6 +440,7 @@ export default function LevelTwoDirectionAccuracy() {
           setStatus(`Resting • ${restSeconds}s`);
           setTargetPoint(null);
           setHighlightTargets([]);
+          setRestRemaining(restSeconds);
         } else {
           finishRun();
           return;
@@ -580,6 +590,12 @@ export default function LevelTwoDirectionAccuracy() {
             aria-hidden="true"
           />
         ))}
+
+      {isRunning && restRemaining !== null && (
+        <div className="pointer-events-none fixed left-1/2 top-1/2 z-40 -translate-x-1/2 -translate-y-1/2 rounded-2xl border border-zinc-800 bg-zinc-950/80 px-4 py-3 text-sm text-white shadow-lg backdrop-blur">
+          Resting... {restRemaining}s
+        </div>
+      )}
 
       {smoothedGazePoint && (
         <div
