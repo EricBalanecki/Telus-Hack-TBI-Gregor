@@ -35,6 +35,9 @@ const PHASES: ExercisePhase[] = [
   { id: "circle", label: "Circle Path", durationMs: 25000 },
 ];
 
+const EXERCISE_NAME = "Level 1: Visual Tracking";
+const RECORDS_ENDPOINT = "http://localhost:8000/records";
+
 const DOT_RADIUS = 12;
 const SMOOTHING_ALPHA = 0.15;
 
@@ -69,6 +72,7 @@ export default function LevelOneVisualTracking() {
   const [phaseIndex, setPhaseIndex] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [score, setScore] = useState<number | null>(null);
+  const [latestScore, setLatestScore] = useState<number | null>(null);
   const [targetPoint, setTargetPoint] = useState<GazePoint | null>(null);
 
   const webgazerRef = useRef<WebGazer | null>(null);
@@ -88,6 +92,32 @@ export default function LevelOneVisualTracking() {
 
   useEffect(() => {
     let isMounted = true;
+
+    const loadLatestScore = async () => {
+      try {
+        const response = await fetch(RECORDS_ENDPOINT);
+        if (!response.ok) {
+          return;
+        }
+        const records = (await response.json()) as Array<{
+          date: string;
+          exercise: string;
+          score: number;
+        }>;
+        const matching = records.filter(
+          (record) => record.exercise === EXERCISE_NAME,
+        );
+        if (matching.length === 0) {
+          return;
+        }
+        const latest = matching.sort((a, b) =>
+          a.date < b.date ? 1 : -1,
+        )[0];
+        setLatestScore(latest.score);
+      } catch (error) {
+        console.error("Failed to load latest score", error);
+      }
+    };
 
     const setupWebgazer = async () => {
       try {
@@ -130,6 +160,7 @@ export default function LevelOneVisualTracking() {
       }
     };
 
+    loadLatestScore();
     setupWebgazer();
 
     return () => {
@@ -194,7 +225,7 @@ export default function LevelOneVisualTracking() {
     totalDistanceRef.current += distance;
   };
 
-  const finishRun = () => {
+  const finishRun = async () => {
     const total = sampleCountRef.current || 1;
     const avgDistance = totalDistanceRef.current / total;
     const halfWindowHeight = window.innerHeight / 2;
@@ -202,8 +233,24 @@ export default function LevelOneVisualTracking() {
     const accuracyScore = Math.max(0, Math.round(rawAccuracy));
 
     setScore(accuracyScore);
+    setLatestScore(accuracyScore);
     setStatus(`Accuracy ${accuracyScore}%`);
     setIsRunning(false);
+
+    try {
+      await fetch(RECORDS_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          date: new Date().toISOString(),
+          exercise: EXERCISE_NAME,
+          score: accuracyScore,
+          notes: "",
+        }),
+      });
+    } catch (error) {
+      console.error("Failed to save score", error);
+    }
   };
 
   const startRun = () => {
@@ -257,57 +304,67 @@ export default function LevelOneVisualTracking() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
-      <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-6 px-6 py-12 text-left">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-semibold tracking-tight">
-              Level 1: Visual Tracking
-            </h1>
-            <p className="text-sm text-zinc-300">
-              Follow the moving dot through three paths. Your score is based on
-              how often you stay near the dot and how closely you keep up.
-            </p>
+      {!isRunning && (
+        <div className="pointer-events-none fixed left-1/2 top-1/2 z-30 w-[320px] -translate-x-1/2 -translate-y-1/2">
+          <div className="pointer-events-auto rounded-2xl border border-zinc-800 bg-zinc-950/80 p-4 text-sm text-zinc-200 shadow-lg backdrop-blur">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <h1 className="text-base font-semibold text-white">
+                Level 1: Visual Tracking
+              </h1>
+              <p className="text-xs text-zinc-400">
+                Follow the moving dot through three paths.
+              </p>
+            </div>
+            <Link
+              className="rounded-full border border-zinc-600 px-3 py-1 text-xs font-semibold text-white"
+              href="/exercises"
+            >
+              Back
+            </Link>
           </div>
-          <Link
-            className="rounded-full border border-zinc-600 px-5 py-2 text-sm font-semibold text-white"
-            href="/exercises"
-          >
-            Back to exercises
-          </Link>
-        </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <span className="w-fit rounded-full bg-zinc-800 px-4 py-2 text-sm text-zinc-200">
-            {status}
-          </span>
-          <span className="text-sm text-zinc-300">{progressLabel}</span>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            className="rounded-full bg-emerald-500 px-5 py-2 text-sm font-semibold text-black"
-            onClick={startRun}
-            disabled={!isWebgazerReady || isRunning}
-          >
-            {isRunning ? "Running..." : "Start exercise"}
-          </button>
-          {score !== null && (
-            <span className="text-sm text-emerald-200">
-              Latest score: {score}%
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-zinc-800 px-3 py-1 text-xs text-zinc-200">
+              {status}
             </span>
-          )}
-        </div>
+            <span className="text-xs text-zinc-400">{progressLabel}</span>
+          </div>
 
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4 text-sm text-zinc-300">
-          <p className="font-semibold text-white">How scoring works</p>
-          <p>
-            We sample your gaze while the dot moves. Score combines the
-            percentage of samples near the dot with a pace score based on
-            average distance. Future updates will let the backend set speed and
-            receive detailed accuracy data.
-          </p>
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            <button
+              className="rounded-full bg-emerald-500 px-4 py-1.5 text-xs font-semibold text-black"
+              onClick={startRun}
+              disabled={!isWebgazerReady || isRunning}
+            >
+              {isRunning ? "Running..." : "Start"}
+            </button>
+            {score !== null && (
+              <span className="text-xs text-emerald-200">
+                Latest score: {score}%
+              </span>
+            )}
+            {score === null && latestScore !== null && (
+              <span className="text-xs text-emerald-200">
+                Last score: {latestScore}%
+              </span>
+            )}
+          </div>
+
+          <details className="mt-3 text-xs text-zinc-400">
+            <summary className="cursor-pointer text-zinc-300">
+              Scoring details
+            </summary>
+            <p className="mt-2">
+              We sample your gaze while the dot moves. Score is based on the
+              average distance from the dot (same accuracy method as
+              calibration). Speed/accuracy reporting will be handled by the
+              backend later.
+            </p>
+          </details>
+          </div>
         </div>
-      </main>
+      )}
 
       {isRunning && targetPoint && (
         <div

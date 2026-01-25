@@ -40,6 +40,7 @@ async def mcp_endpoint(request: Request):
 class Record(BaseModel):
     date: str
     exercise: str
+    score: int
     notes: str
 
 @app.get("/records")
