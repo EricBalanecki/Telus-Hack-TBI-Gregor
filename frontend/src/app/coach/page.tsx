@@ -96,7 +96,9 @@ export default function CoachPage() {
     <div className="min-h-screen text-white">
       <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-6 px-6 pb-16 pt-12">
         <div className="flex flex-col gap-2 text-left">
-          <h1 className="text-3xl font-semibold tracking-tight">Coach</h1>
+          <h1 className="text-3xl font-semibold tracking-tight">
+            Coach Gregor
+          </h1>
           <p className="text-sm text-zinc-400">
             Ask about progress, accuracy, or how motor control improves TBI recovery.
           </p>
@@ -115,7 +117,7 @@ export default function CoachPage() {
           <div className="flex flex-1 flex-col rounded-2xl border border-zinc-800 bg-zinc-950/70 shadow-lg backdrop-blur">
             <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-3">
               <div className="text-xs uppercase tracking-[0.3em] text-zinc-400">
-                Coach
+                Coach Gregor
               </div>
               <button
                 className="rounded-full border border-zinc-700 p-2 text-zinc-200 hover:border-emerald-400/60 hover:text-emerald-200"
