@@ -1,8 +1,15 @@
 "use client";
 
-import * as React from "react";
 import { TrendingUp } from "lucide-react";
-import { useMemo } from "react";
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 import {
   Card,
@@ -36,30 +43,6 @@ export function LineChartCard({
   emptyLabel = "No data yet",
 }: LineChartCardProps) {
   const hasData = data.length > 0;
-  const chart = useMemo(() => {
-    if (!hasData) {
-      return null;
-    }
-
-    const width = 100;
-    const height = 40;
-    const padding = 6;
-    const maxValue = Math.max(100, ...data.map((point) => point.value));
-    const minValue = Math.min(0, ...data.map((point) => point.value));
-    const range = Math.max(1, maxValue - minValue);
-
-    const points = data
-      .map((point, index) => {
-        const x =
-          padding + (index / Math.max(1, data.length - 1)) * (width - padding * 2);
-        const normalized = (point.value - minValue) / range;
-        const y = height - padding - normalized * (height - padding * 2);
-        return `${x},${y}`;
-      })
-      .join(" ");
-
-    return { width, height, padding, points };
-  }, [data, hasData]);
 
   return (
     <Card className="border-zinc-800 bg-zinc-950/70 text-white">
@@ -74,32 +57,41 @@ export function LineChartCard({
       <CardContent>
         {hasData ? (
           <div className="h-56 w-full">
-            <div className="flex h-full w-full flex-col gap-3">
-              <div className="flex items-center justify-between text-xs text-zinc-500">
-                <span>{data[0]?.label}</span>
-                <span>{data[data.length - 1]?.label}</span>
-              </div>
-              <div className="flex-1 rounded-xl border border-zinc-800 bg-zinc-950/80 px-3 py-2">
-                {chart && (
-                  <svg
-                    viewBox={`0 0 ${chart.width} ${chart.height}`}
-                    className="h-full w-full"
-                    preserveAspectRatio="none"
-                  >
-                    <polyline
-                      fill="none"
-                      stroke={color}
-                      strokeWidth="2"
-                      points={chart.points}
-                    />
-                  </svg>
-                )}
-              </div>
-              <div className="flex items-center justify-between text-xs text-zinc-400">
-                <span>Min</span>
-                <span>Max</span>
-              </div>
-            </div>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={data} margin={{ left: 8, right: 8 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+                <XAxis
+                  dataKey="label"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  stroke="#94a3b8"
+                />
+                <YAxis
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  domain={[0, 100]}
+                  stroke="#94a3b8"
+                />
+                <Tooltip
+                  cursor={{ stroke: "#334155", strokeWidth: 1 }}
+                  contentStyle={{
+                    background: "rgba(24, 24, 27, 0.9)",
+                    border: "1px solid #27272a",
+                    borderRadius: "10px",
+                    color: "#e2e8f0",
+                  }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke={color}
+                  strokeWidth={2}
+                  dot={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         ) : (
           <div className="flex h-56 items-center justify-center text-sm text-zinc-400">
