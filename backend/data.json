@@ -32,7 +32,7 @@
       "rest_time": 20,
       "target_size": null,
       "num_targets": null,
-      "days": 4
+      "days": 3
     },
     {
       "exercise": "Level 2 \u2013 Direction & Accuracy",
@@ -48,11 +48,11 @@
       "exercise": "Level 3 \u2013 Distractors & Control",
       "description": "Trains selective attention and visual filtering. Includes: 1. Follow the Red Dot: multiple dots move, follow only the red one; 2. Stay on Target: target stays still while distractors move, user keeps gaze on center target. Purpose: improves stability and focus.",
       "dot_size": 2,
-      "speed": 1,
-      "rest_time": 15,
+      "speed": 2,
+      "rest_time": 10,
       "target_size": null,
       "num_targets": null,
-      "days": 5
+      "days": 4
     },
     {
       "exercise": "Level 4 \u2013 Eye + Reaction",
@@ -72,14 +72,14 @@
       "rest_time": 10,
       "target_size": null,
       "num_targets": null,
-      "days": 6
+      "days": 5
     },
     {
       "exercise": "Level 6 \u2013 Functional (Advanced)",
       "description": "Simulates real-life tasks and supports advanced rehab. Includes: 1. Visual Search: find the target among many items; 2. Reading-Style Tracking: line of dots moves like text, user follows like reading. Purpose: scanning ability, reading rehab, and eye movement sequencing.",
       "dot_size": 3,
-      "speed": 2,
-      "rest_time": 10,
+      "speed": 3,
+      "rest_time": 5,
       "target_size": null,
       "num_targets": null,
       "days": 6
@@ -94,5 +94,10 @@
       "num_targets": null,
       "days": 7
     }
-  ]
+  ],
+  "plan_completions": {
+    "week-1-day-1": false,
+    "week-1-day-2": false,
+    "week-1-day-3": false
+  }
 }

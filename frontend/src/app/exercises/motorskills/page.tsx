@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { TransformControls, OrbitControls, Sphere, useGLTF, PerspectiveCamera } from "@react-three/drei";
@@ -10,20 +11,21 @@ import * as THREE from "three";
 import { PCA } from "ml-pca";
 import { createRecord } from "@/api/records";
 
-export default function PhysicalDevice({
-	targetSize = 2,
-	targetsHitTarget = 10,
-}: {
-	targetSize: number,
-	targetsHitTarget: number
-}) {
+export default function PhysicalDevice() {
 	const quatRef = useRef<[number, number, number, number]>([0, 0, 0, 1]);
 	const wallRef = useRef<THREE.Mesh>(null!);
 	const hitPointsRef = useRef<THREE.Vector3[]>([]);
 
+	const [targetSize, setTargetSize] = useState(2);
+	const [targetsHitTarget, setTargetsHitTarget] = useState(10);
 	const [score, setScore] = useState(0);
 	const [targetsHit, setTargetsHit] = useState(0);
 	const [started, setStarted] = useState(false);
+	const searchParams = useSearchParams();
+	const backHref =
+		searchParams?.get("from") === "workout-plan"
+			? "/workout-plan"
+			: "/exercises";
 
 	const { onClick, device } = useRequestDevice({
 		filters: [{ namePrefix: "BIODYN" }],
@@ -65,6 +67,20 @@ export default function PhysicalDevice({
 			device.gatt?.disconnect();
 		};
 	}, [device]);
+
+	useEffect(() => {
+		if (!searchParams) {
+			return;
+		}
+		const targetSizeParam = Number(searchParams.get("targetSize"));
+		const targetsParam = Number(searchParams.get("targets"));
+		if (!Number.isNaN(targetSizeParam)) {
+			setTargetSize(Math.min(3, Math.max(0.5, targetSizeParam)));
+		}
+		if (!Number.isNaN(targetsParam)) {
+			setTargetsHitTarget(Math.min(20, Math.max(1, targetsParam)));
+		}
+	}, [searchParams]);
 
 	useEffect(() => {
 		if (targetsHit >= targetsHitTarget) {
@@ -123,7 +139,7 @@ export default function PhysicalDevice({
 							</div>
 							<Link
 								className="rounded-full border border-zinc-600 px-3 py-1 text-xs font-semibold text-white"
-								href="/exercises"
+								href={backHref}
 							>
 								Back
 							</Link>
@@ -187,7 +203,7 @@ export default function PhysicalDevice({
 							</div>
 							<Link
 								className="rounded-full border border-zinc-600 px-3 py-1 text-xs font-semibold text-white"
-								href="/exercises"
+								href={backHref}
 							>
 								Back
 							</Link>

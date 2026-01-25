@@ -24,3 +24,7 @@ class ChatMessage(BaseModel):
 
 class CoachInput(BaseModel):
     messages: List[ChatMessage]
+
+class PlanCompletionInput(BaseModel):
+    item_id: str
+    completed: bool

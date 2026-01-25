@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { createRecord } from "@/api/records";
 import { Slider } from "@/components/ui/slider";
@@ -140,6 +141,11 @@ export default function LevelTwoDirectionAccuracy() {
 
   const currentPhase = PHASES[phaseIndex];
   const targetRadius = BASE_DOT_RADIUS * dotSizeScale;
+  const searchParams = useSearchParams();
+  const backHref =
+    searchParams?.get("from") === "workout-plan"
+      ? "/workout-plan"
+      : "/exercises";
 
   const progressLabel = useMemo(() => {
     if (!currentPhase) {
@@ -204,6 +210,24 @@ export default function LevelTwoDirectionAccuracy() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (!searchParams) {
+      return;
+    }
+    const dotSize = Number(searchParams.get("dotSize"));
+    const speed = Number(searchParams.get("speed"));
+    const rest = Number(searchParams.get("rest"));
+    if (!Number.isNaN(dotSize)) {
+      setDotSizeScale(Math.min(3, Math.max(1, dotSize)));
+    }
+    if (!Number.isNaN(speed)) {
+      setSpeedScale(Math.min(3, Math.max(1, speed)));
+    }
+    if (!Number.isNaN(rest)) {
+      setRestSeconds(Math.min(30, Math.max(1, rest)));
+    }
+  }, [searchParams]);
 
   const resetMetrics = () => {
     reactionTimesRef.current = [];
@@ -486,7 +510,7 @@ export default function LevelTwoDirectionAccuracy() {
               </div>
               <Link
                 className="rounded-full border border-zinc-600 px-3 py-1 text-xs font-semibold text-white"
-                href="/exercises"
+                href={backHref}
               >
                 Back
               </Link>

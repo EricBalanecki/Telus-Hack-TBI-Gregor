@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { MessageCircle, Send, X } from "lucide-react";
+import { sendCoachMessage } from "@/api/coach";
 
 type ChatMessage = {
   id: string;
@@ -51,26 +52,12 @@ export default function CoachPage() {
     setErrorMessage(null);
 
     try {
-      const response = await fetch("http://localhost:8000/coach", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: [...messages, userMessage].map((message) => ({
-            role: message.role,
-            content: message.content,
-          })),
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Coach request failed");
-      }
-
-      const data = (await response.json()) as { reply?: string };
-      const replyText = data.reply?.trim();
-      if (!replyText) {
-        throw new Error("Empty coach response");
-      }
+      const replyText = await sendCoachMessage(
+        [...messages, userMessage].map((message) => ({
+          role: message.role,
+          content: message.content,
+        })),
+      );
 
       const assistantMessage: ChatMessage = {
         id: `${Date.now()}-assistant`,

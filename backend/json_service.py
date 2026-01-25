@@ -50,3 +50,17 @@ def save_plan(plan: list):
 def read_plan():
     db = read_db()
     return db.get("plan", [])
+
+
+def read_plan_completions():
+    db = read_db()
+    return db.get("plan_completions", {})
+
+
+def save_plan_completion(item_id: str, completed: bool):
+    db = read_db()
+    if "plan_completions" not in db:
+        db["plan_completions"] = {}
+    db["plan_completions"][item_id] = completed
+    write_db(db)
+    return {"id": item_id, "completed": completed}

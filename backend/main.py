@@ -2,9 +2,17 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from schemas import BaseInput, NotesInput, RecordInput, CoachInput
+from schemas import BaseInput, NotesInput, RecordInput, CoachInput, PlanCompletionInput
 from llm_client import get_plan, get_notes, get_coach_response
-from json_service import add_record, read_records, save_plan, read_plan, read_db
+from json_service import (
+    add_record,
+    read_records as read_records_db,
+    save_plan,
+    read_plan as read_plan_db,
+    read_db,
+    read_plan_completions,
+    save_plan_completion,
+)
 import json
 
 
@@ -62,7 +70,15 @@ def generate_plan(data: BaseInput):
 
 @app.get("/plan")
 def read_plan():
-    return read_plan()
+    return read_plan_db()
+
+@app.get("/plan/completions")
+def get_plan_completions():
+    return read_plan_completions()
+
+@app.post("/plan/completions")
+def set_plan_completion(data: PlanCompletionInput):
+    return save_plan_completion(data.item_id, data.completed)
 
 @app.post("/notes")
 def generate_notes(data: NotesInput):
@@ -84,7 +100,7 @@ def coach_chat(data: CoachInput):
     
 @app.get("/records")
 def read_records():
-    return read_records()
+    return read_records_db()
 
 
 @app.post("/records")

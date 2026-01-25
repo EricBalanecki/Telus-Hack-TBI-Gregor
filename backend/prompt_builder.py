@@ -77,7 +77,7 @@ Keep it concise and positive, but honest.
 def build_coach_prompt(messages: list[ChatMessage], db: dict):
     records = db.get("records", [])
     records_json = json.dumps(records, indent=2)
-    # exercises_json = json.dumps(EXERCISES, indent=2)
+    exercises_json = json.dumps(EXERCISES, indent=2)      
 
     conversation = "\n".join(
         [f"{msg.role.upper()}: {msg.content}" for msg in messages]
@@ -96,6 +96,9 @@ Format requirements:
 
 User records (JSON):
 {records_json}
+
+Exercise catalog (JSON):
+{exercises_json}
 
 Conversation:
 {conversation}
