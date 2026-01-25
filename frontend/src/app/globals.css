@@ -123,3 +123,19 @@
     @apply bg-background text-foreground;
   }
 }
+
+#webgazerVideoFeed,
+#webgazerVideoCanvas,
+#webgazerFaceOverlay {
+  position: fixed !important;
+  right: 16px !important;
+  bottom: 16px !important;
+  width: 180px !important;
+  height: 135px !important;
+  border-radius: 12px !important;
+  z-index: 20 !important;
+}
+
+#webgazerVideoFeed {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+}

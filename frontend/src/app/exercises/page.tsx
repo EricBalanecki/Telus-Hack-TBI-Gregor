@@ -92,7 +92,7 @@ export default function ExercisesPage() {
 
         await instance.begin();
         instance
-          .showVideoPreview(false)
+          .showVideoPreview(true)
           .showPredictionPoints(false)
           .applyKalmanFilter(true);
 
@@ -142,15 +142,12 @@ export default function ExercisesPage() {
       title: "Level 1: Visual Tracking",
       difficulty: "Easy",
       imageLabel: "Visual tracking paths",
+      href: "/exercises/level-1-visual-tracking",
       parts: [
         "Follow the Dot (horizontal)",
         "Follow the Dot (vertical)",
         "Circle Path",
       ],
-      scoring:
-        "Score is based on the % of gaze samples near the moving dot and how well you keep pace.",
-      futureNote:
-        "Speed and accuracy reporting will be handled by the backend in a future update.",
     },
   ];
 
@@ -167,8 +164,7 @@ export default function ExercisesPage() {
           Eye Exercises
         </h1>
         <p className="text-base text-zinc-300">
-          Follow the exercises below. The gaze dot is active here, but clicking
-          does not change calibration.
+          Follow the exercises below. 
         </p>
         <span className="w-fit rounded-full bg-zinc-800 px-4 py-2 text-sm text-zinc-200">
           {status}
@@ -191,42 +187,44 @@ export default function ExercisesPage() {
         </div>
         <section className="grid gap-4 md:grid-cols-2">
           {exercises.map((exercise) => (
-            <Card key={exercise.id} className="border-zinc-800 bg-zinc-900/60">
-              <CardHeader>
-                <div className="flex items-start justify-between gap-4">
-                  <CardTitle className="text-xl text-white">
-                    {exercise.title}
-                  </CardTitle>
-                  <span className="rounded-full bg-emerald-400/20 px-3 py-1 text-xs font-semibold text-emerald-200">
-                    {exercise.difficulty}
-                  </span>
-                </div>
-                <CardDescription className="text-zinc-300">
-                  {exercise.scoring}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex h-32 items-center justify-center rounded-lg border border-dashed border-zinc-700 bg-zinc-950/50 text-sm text-zinc-400">
-                  {exercise.imageLabel}
-                </div>
-                <div className="space-y-2 text-sm text-zinc-200">
-                  <p className="font-semibold text-white">Parts</p>
-                  <ul className="list-disc space-y-1 pl-5 text-zinc-300">
-                    {exercise.parts.map((part) => (
-                      <li key={part}>{part}</li>
-                    ))}
-                  </ul>
-                </div>
-                <p className="text-xs text-zinc-400">{exercise.futureNote}</p>
-              </CardContent>
-            </Card>
+            <Link
+              key={exercise.id}
+              href={exercise.href}
+              className="block"
+            >
+              <Card className="border-zinc-800 bg-zinc-900/60 transition hover:border-emerald-400/60 hover:bg-zinc-900">
+                <CardHeader>
+                  <div className="flex items-start justify-between gap-4">
+                    <CardTitle className="text-xl text-white">
+                      {exercise.title}
+                    </CardTitle>
+                    <span className="rounded-full bg-emerald-400/20 px-3 py-1 text-xs font-semibold text-emerald-200">
+                      {exercise.difficulty}
+                    </span>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex h-32 items-center justify-center rounded-lg border border-dashed border-zinc-700 bg-zinc-950/50 text-sm text-zinc-400">
+                    {exercise.imageLabel}
+                  </div>
+                  <div className="space-y-2 text-sm text-zinc-200">
+                    <p className="font-semibold text-white">Parts</p>
+                    <ul className="list-disc space-y-1 pl-5 text-zinc-300">
+                      {exercise.parts.map((part) => (
+                        <li key={part}>{part}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </section>
       </main>
 
       {smoothedGazePoint && (
         <div
-          className="pointer-events-none fixed h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]"
+          className="pointer-events-none fixed z-50 h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]"
           style={clampToViewport(smoothedGazePoint)}
           aria-hidden="true"
         />
