@@ -123,16 +123,27 @@
   }
 }
 
+#webgazerVideoContainer {
+  position: fixed !important;
+  left: 16px !important;
+  top: 16px !important;
+  border-radius: 12px !important;
+  z-index: 20 !important;
+  overflow: hidden !important;
+  transform: scale(0.7) !important;
+  transform-origin: top left !important;
+}
+
 #webgazerVideoFeed,
 #webgazerVideoCanvas,
 #webgazerFaceOverlay {
-  position: fixed !important;
-  right: 16px !important;
-  bottom: 16px !important;
-  width: 180px !important;
-  height: 135px !important;
+  position: absolute !important;
+  inset: 0 !important;
   border-radius: 12px !important;
-  z-index: 20 !important;
+}
+
+#webgazerFaceFeedbackBox {
+  position: absolute !important;
 }
 
 #webgazerVideoFeed {
