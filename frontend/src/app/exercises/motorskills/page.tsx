@@ -9,13 +9,20 @@ import { BluetoothRemoteGATTCharacteristic } from "web-bluetooth";
 import * as THREE from "three";
 import { PCA } from "ml-pca";
 
-export default function PhysicalDevice() {
+export default function PhysicalDevice({
+	targetSize = 2,
+	targetsHitTarget = 10,
+}: {
+	targetSize: number,
+	targetsHitTarget: number
+}) {
 	const quatRef = useRef<[number, number, number, number]>([0, 0, 0, 1]);
 	const wallRef = useRef<THREE.Mesh>(null!);
 	const hitPointsRef = useRef<THREE.Vector3[]>([]);
-	const targetSize = 2;
 
 	const [score, setScore] = useState(0);
+	const [targetsHit, setTargetsHit] = useState(0);
+	const [started, setStarted] = useState(false);
 
 	const { onClick, device } = useRequestDevice({
 		filters: [{ namePrefix: "BIODYN" }],
@@ -61,29 +68,36 @@ export default function PhysicalDevice() {
 	return (
 		<div className="relative min-h-screen bg-zinc-950 text-white">
 			<div className="absolute inset-0">
-				<Canvas className="h-screen w-screen">
-					<PerspectiveCamera
-						makeDefault
-						position={[0, 5, 10]}
-						fov={60}
-					/>
-					<ambientLight intensity={0.5} />
-					<directionalLight position={[5, 5, 5]} intensity={1} />
-					<LaserScene
-						quatRef={quatRef}
-						wallRef={wallRef}
-						hitPointsRef={hitPointsRef}
-						targetSize={targetSize}
-						score={score}
-						setScore={setScore}
-					/>
-					<OrbitControls />
-					<mesh ref={wallRef} rotation={[0.0, 0.0, 0]}>
-						<boxGeometry args={[-30, 30, 30]} />
-						<meshStandardMaterial color="blue" />
-					</mesh>
-				</Canvas>
+				{(started && targetsHit < targetsHitTarget) &&
+					<Canvas className="h-screen w-screen">
+						<PerspectiveCamera
+							makeDefault
+							position={[0, 5, 10]}
+							fov={60}
+						/>
+						<ambientLight intensity={0.5} />
+						<directionalLight position={[5, 5, 5]} intensity={1} />
+						<LaserScene
+							quatRef={quatRef}
+							wallRef={wallRef}
+							hitPointsRef={hitPointsRef}
+							targetSize={targetSize}
+							score={score}
+							setScore={setScore}
+							targetsHit={targetsHit}
+							setTargetsHit={setTargetsHit}
+						/>
+						<OrbitControls />
+						<mesh ref={wallRef} rotation={[0.0, 0.0, 0]}>
+							<boxGeometry args={[-30, 30, 30]} />
+							<meshStandardMaterial color="blue" />
+						</mesh>
+					</Canvas>}
 			</div>
+
+
+			{started && <></> /* TODO: Add a start page */}
+			{(targetsHit >= targetsHitTarget) && <></> /* TODO: Add centered "go back" page */}
 
 			<div className="absolute left-5 top-5 z-20 w-[240px] rounded-2xl border border-zinc-800 bg-zinc-950/80 px-4 py-3 text-sm text-white shadow-lg backdrop-blur">
 				<div className="text-xs uppercase tracking-[0.2em] text-zinc-400">
@@ -128,6 +142,8 @@ function LaserScene({
 	targetSize,
 	score,
 	setScore,
+	targetsHit,
+	setTargetsHit
 }: {
 	quatRef: React.MutableRefObject<[number, number, number, number]>;
 	wallRef: React.RefObject<THREE.Mesh>;
@@ -135,6 +151,8 @@ function LaserScene({
 	targetSize: number,
 	score: number,
 	setScore: (x: number) => void,
+	targetsHit: number,
+	setTargetsHit: (x: number) => void,
 }) {
 	const meshRef = useRef<THREE.Mesh>(null!);
 	const lineRef = useRef<THREE.Line>(null!);
@@ -163,15 +181,14 @@ function LaserScene({
 		const z = max.z;
 		setTargetPosition(new THREE.Vector3(x, y, z));
 
-		// Clear path, add variance
-
+		// Clear path, add linearality
 		if (hitPointsRef.current != null && hitPointsRef.current.length > 7) {
 			const points3D = hitPointsRef.current.map(v => [v.x, v.y, v.z]);
 			const pca = new PCA(points3D);
 			const ev = pca.getExplainedVariance();
 			const linearity = ev[0] / (ev[0] + ev[1] + ev[2]);
-			setScore(score + linearity);
-			// TODO: Collect linearity
+			setScore(score + Math.pow(linearity, 4));
+			setTargetsHit(targetsHit + 1);
 		}
 
 		hitPointsRef.current = [];
