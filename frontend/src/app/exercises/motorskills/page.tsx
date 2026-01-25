@@ -22,6 +22,7 @@ export default function PhysicalDevice({
 
 	const [score, setScore] = useState(0);
 	const [targetsHit, setTargetsHit] = useState(0);
+	const [started, setStarted] = useState(false);
 
 	const { onClick, device } = useRequestDevice({
 		filters: [{ namePrefix: "BIODYN" }],
@@ -67,7 +68,7 @@ export default function PhysicalDevice({
 	return (
 		<div className="relative min-h-screen bg-zinc-950 text-white">
 			<div className="absolute inset-0">
-				{(targetsHit < targetsHitTarget) &&
+				{(started && targetsHit < targetsHitTarget) &&
 					<Canvas className="h-screen w-screen">
 						<PerspectiveCamera
 							makeDefault
@@ -94,7 +95,9 @@ export default function PhysicalDevice({
 					</Canvas>}
 			</div>
 
-			{/* TODO: Add centered "go back" page */}
+
+			{started && <></> /* TODO: Add a start page */}
+			{(targetsHit >= targetsHitTarget) && <></> /* TODO: Add centered "go back" page */}
 
 			<div className="absolute left-5 top-5 z-20 w-[240px] rounded-2xl border border-zinc-800 bg-zinc-950/80 px-4 py-3 text-sm text-white shadow-lg backdrop-blur">
 				<div className="text-xs uppercase tracking-[0.2em] text-zinc-400">
