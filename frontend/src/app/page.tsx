@@ -17,16 +17,10 @@ export default function Home() {
             Session History
           </Link>
           <Link
-            className="rounded-full border border-zinc-600 px-5 py-2 text-sm font-semibold text-white"
-            href="/motorskills"
-          >
-            Motor Control Exercises
-          </Link>
-          <Link
             className="rounded-full bg-emerald-500 px-5 py-2 text-sm font-semibold text-black"
             href="/exercises"
           >
-            Eye exercises
+            Exercises
           </Link>
         </div>
       </main>
