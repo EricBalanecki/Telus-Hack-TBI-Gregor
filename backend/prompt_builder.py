@@ -2,7 +2,7 @@ import json
 from schemas import BaseInput, NotesInput, ChatMessage
 from exercises import EXERCISES
 
-def build_base_exercise_prompt(input: BaseInput):
+def build_plan_prompt(input: BaseInput):
     """
     Builds a prompt that:
     1. Chooses the most appropriate exercises based on motor/visual levels and descriptions.

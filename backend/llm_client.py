@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 
 from schemas import BaseInput, NotesInput, ChatMessage
-from prompt_builder import build_base_exercise_prompt, build_notes_prompt, build_coach_prompt
+from prompt_builder import build_plan_prompt, build_notes_prompt, build_coach_prompt
 
 load_dotenv()
 
@@ -26,8 +26,8 @@ def call_llm(prompt):
 
     return response.choices[0].text.strip()
 
-def get_base_exercise(input: BaseInput):
-    prompt = build_base_exercise_prompt(input)
+def get_plan(input: BaseInput):
+    prompt = build_plan_prompt(input)
 
     return call_llm(prompt)
 

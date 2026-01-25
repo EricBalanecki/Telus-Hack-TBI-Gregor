@@ -3,8 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from schemas import BaseInput, NotesInput, RecordInput, CoachInput
-from llm_client import get_base_exercise, get_notes, get_coach_response
-from json_service import add_record, get_records, read_db
+from llm_client import get_plan, get_notes, get_coach_response
+from json_service import add_record, read_records, save_plan, read_plan, read_db
 import json
 
 
@@ -37,9 +37,9 @@ async def mcp_endpoint(request: Request):
     else:
         return {"error": f"Unknown tool {tool_name}"}
     
-@app.post("/base-exercise")
-def generate_exercise(data: BaseInput):
-    result = get_base_exercise(data)
+@app.post("/plan")
+def generate_plan(data: BaseInput):
+    result = get_plan(data)
 
     try:
         # Attempt to parse the LLM response as JSON
@@ -53,9 +53,16 @@ def generate_exercise(data: BaseInput):
                 "raw": result
             }
         )
+    
+    # Save to local db
+    save_plan(result_json)
 
     # Successfully parsed JSON
     return result_json
+
+@app.get("/plan")
+def read_plan():
+    return read_plan()
 
 @app.post("/notes")
 def generate_notes(data: NotesInput):
@@ -77,7 +84,7 @@ def coach_chat(data: CoachInput):
     
 @app.get("/records")
 def read_records():
-    return get_records()
+    return read_records()
 
 
 @app.post("/records")

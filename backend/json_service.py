@@ -5,7 +5,7 @@ DB_FILE = Path("data.json")
 
 # Initialize DB if not exists
 if not DB_FILE.exists():
-    DB_FILE.write_text(json.dumps({"records": [], "progress": 0}, indent=2))
+    DB_FILE.write_text(json.dumps({"records": [], "plan": []}, indent=2))
 
 
 def read_db():
@@ -31,6 +31,22 @@ def add_record(record: dict):
     return record
 
 
-def get_records():
+def read_records():
     db = read_db()
     return db["records"]
+
+
+def save_plan(plan: list):
+    """
+    Overwrites the current workout plan.
+    plan should be a list of exercise JSON objects.
+    """
+    db = read_db()
+    db["plan"] = plan
+    write_db(db)
+    return plan
+
+
+def read_plan():
+    db = read_db()
+    return db.get("plan", [])

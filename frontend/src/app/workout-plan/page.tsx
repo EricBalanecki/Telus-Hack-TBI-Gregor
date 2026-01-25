@@ -102,7 +102,7 @@ export default function WorkoutPlanPage() {
   };
 
   try {
-    const res = await fetch("http://localhost:8000/base-exercise", {
+    const res = await fetch("http://localhost:8000/plan", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
