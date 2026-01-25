@@ -426,9 +426,9 @@ export default function CalibrationPage() {
         <div className="flex items-center gap-3">
           <Link
             className="rounded-full border border-zinc-600 px-5 py-2 text-sm font-semibold text-white"
-            href="/"
+            href="/exercises"
           >
-            Back to home
+            Back to exercises
           </Link>
           {isWebgazerReady && (
             <button
@@ -502,7 +502,6 @@ export default function CalibrationPage() {
           />
         </div>
       )}
-
 
       {isImproveMode && smoothedGazePoint && (
         <div

@@ -197,7 +197,7 @@ export default function ExercisesPage() {
           {isWebgazerReady && (
             <Link
               className="rounded-full bg-emerald-500 px-5 py-2 text-sm font-semibold text-black"
-              href="/calibration"
+              href="/exercises/calibration"
             >
               {hasSavedCalibration ? "Recalibrate" : "Calibrate"}
             </Link>
