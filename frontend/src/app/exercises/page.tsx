@@ -28,7 +28,7 @@ export default function ExercisesPage() {
       title: "Level 1: Visual Tracking",
       difficulty: "Easy",
       imageLabel: "Visual tracking paths",
-      imageSrc: "/exercises/level-1.png",
+      imageSrc: "/exercises/one.png",
       href: "/exercises/level-1-visual-tracking",
       parts: [
         "Follow the Dot (horizontal)",
@@ -45,6 +45,7 @@ export default function ExercisesPage() {
       title: "Level 2: Direction & Accuracy",
       difficulty: "Medium",
       imageLabel: "Direction and accuracy targets",
+      imageSrc: "/exercises/two.png",
       href: "/exercises/level-2-direction-accuracy",
       parts: [
         "Random Target Jump",
@@ -60,6 +61,7 @@ export default function ExercisesPage() {
       title: "Level 3: Distractors & Control",
       difficulty: "Medium",
       imageLabel: "Focus with moving distractors",
+      imageSrc: "/exercises/level-3.png",
       parts: [
         "Follow the Red Dot",
         "Stay on Target",
@@ -187,7 +189,7 @@ export default function ExercisesPage() {
                         : "opacity-80"
                     }`}
                   >
-                    <CardHeader>
+                    <CardHeader className="min-h-[88px]">
                       <div className="flex items-start justify-between gap-4">
                         <CardTitle className="text-xl text-white">
                           {exercise.title}
@@ -208,13 +210,13 @@ export default function ExercisesPage() {
                     <CardContent className="space-y-4">
                       <div className="relative h-36 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950/50">
                         {exercise.imageSrc ? (
-                          <Image
-                            src={exercise.imageSrc}
-                            alt={exercise.imageLabel}
-                            fill
-                            sizes="(max-width: 768px) 100vw, 50vw"
-                            className="object-cover"
-                          />
+                        <Image
+                          src={exercise.imageSrc}
+                          alt={exercise.imageLabel}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          className={`object-cover object-top ${exercise.imagePosition ?? ""}`}
+                        />
                         ) : (
                           <div className="flex h-full w-full items-center justify-center text-xs text-zinc-500">
                             {exercise.imageLabel}
@@ -263,7 +265,7 @@ export default function ExercisesPage() {
               {motorExercises.map((exercise) => (
                 <Link key={exercise.id} href={exercise.href} className="block">
                   <Card className="border-zinc-800 bg-zinc-900/60 transition hover:border-emerald-400/60 hover:bg-zinc-900">
-                    <CardHeader>
+                    <CardHeader className="min-h-[88px]">
                       <div className="flex items-start justify-between gap-4">
                         <CardTitle className="text-xl text-white">
                           {exercise.title}
