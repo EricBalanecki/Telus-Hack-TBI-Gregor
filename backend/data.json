@@ -1,3 +1,10 @@
 {
-  "records": []
+  "records": [
+    {
+      "date": "2026-01-24",
+      "exercise": "hand-eye",
+      "score": 10,
+      "notes": "gregor"
+    }
+  ]
 }

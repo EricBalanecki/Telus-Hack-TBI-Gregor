@@ -6,6 +6,7 @@ type RecordType = {
   date: string;
   exercise: string;
   notes: string;
+  score: number;
 };
 
 export default function ProgressPage() {
@@ -50,6 +51,9 @@ export default function ProgressPage() {
                       Exercise
                     </th>
                     <th className="px-4 py-2 text-sm font-semibold text-zinc-300">
+                      Score
+                    </th>
+                    <th className="px-4 py-2 text-sm font-semibold text-zinc-300">
                       Notes
                     </th>
                   </tr>
@@ -66,6 +70,9 @@ export default function ProgressPage() {
                       </td>
                       <td className="px-4 py-2 text-sm text-white">
                         {r.exercise}
+                      </td>
+                      <td className="px-4 py-2 text-sm text-zinc-300">
+                        {r.score}
                       </td>
                       <td className="px-4 py-2 text-sm text-zinc-300">
                         {r.notes}
