@@ -1,0 +1,329 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect, useMemo, useRef, useState } from "react";
+
+type GazePoint = {
+  x: number;
+  y: number;
+};
+
+type WebGazer = {
+  setRegression: (name: string) => WebGazer;
+  setGazeListener: (
+    callback: (data: GazePoint | null, elapsedTime?: number) => void,
+  ) => WebGazer;
+  saveDataAcrossSessions: (value: boolean) => WebGazer;
+  begin: () => Promise<void> | void;
+  end: () => void;
+  showVideoPreview: (show: boolean) => WebGazer;
+  showPredictionPoints: (show: boolean) => WebGazer;
+  applyKalmanFilter: (enabled: boolean) => WebGazer;
+  getStoredPoints: () => [number[], number[]];
+  removeMouseEventListeners: () => void;
+};
+
+type ExercisePhase = {
+  id: "horizontal" | "vertical" | "circle";
+  label: string;
+  durationMs: number;
+};
+
+const PHASES: ExercisePhase[] = [
+  { id: "horizontal", label: "Follow the Dot (horizontal)", durationMs: 20000 },
+  { id: "vertical", label: "Follow the Dot (vertical)", durationMs: 20000 },
+  { id: "circle", label: "Circle Path", durationMs: 25000 },
+];
+
+const DOT_RADIUS = 12;
+const SMOOTHING_ALPHA = 0.15;
+
+const smoothEMA = (
+  prev: GazePoint | null,
+  next: GazePoint,
+  alpha = SMOOTHING_ALPHA,
+) => {
+  if (!prev) {
+    return next;
+  }
+  return {
+    x: prev.x + alpha * (next.x - prev.x),
+    y: prev.y + alpha * (next.y - prev.y),
+  };
+};
+
+const clampToViewport = (point: GazePoint) => {
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+  return {
+    left: Math.min(Math.max(point.x, DOT_RADIUS), width - DOT_RADIUS),
+    top: Math.min(Math.max(point.y, DOT_RADIUS), height - DOT_RADIUS),
+  };
+};
+
+export default function LevelOneVisualTracking() {
+  const [smoothedGazePoint, setSmoothedGazePoint] =
+    useState<GazePoint | null>(null);
+  const [isWebgazerReady, setIsWebgazerReady] = useState(false);
+  const [status, setStatus] = useState("Initializing eye tracker...");
+  const [phaseIndex, setPhaseIndex] = useState(0);
+  const [isRunning, setIsRunning] = useState(false);
+  const [score, setScore] = useState<number | null>(null);
+  const [targetPoint, setTargetPoint] = useState<GazePoint | null>(null);
+
+  const webgazerRef = useRef<WebGazer | null>(null);
+  const startTimeRef = useRef<number | null>(null);
+  const animationRef = useRef<number | null>(null);
+  const sampleCountRef = useRef(0);
+  const totalDistanceRef = useRef(0);
+
+  const currentPhase = PHASES[phaseIndex];
+
+  const progressLabel = useMemo(() => {
+    if (!currentPhase) {
+      return "Complete";
+    }
+    return `${phaseIndex + 1}/${PHASES.length} • ${currentPhase.label}`;
+  }, [currentPhase, phaseIndex]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const setupWebgazer = async () => {
+      try {
+        const { default: webgazer } = await import("webgazer");
+
+        if (!isMounted) {
+          return;
+        }
+
+        const instance = webgazer as WebGazer;
+        webgazerRef.current = instance;
+
+        instance
+          .setRegression("ridge")
+          .setGazeListener((data: GazePoint | null) => {
+            if (!data || !isMounted) {
+              return;
+            }
+            const nextPoint = { x: data.x, y: data.y };
+            setSmoothedGazePoint((prev) => smoothEMA(prev, nextPoint));
+          })
+          .saveDataAcrossSessions(true);
+
+        await instance.begin();
+        instance
+          .showVideoPreview(true)
+          .showPredictionPoints(false)
+          .applyKalmanFilter(true);
+
+        instance.removeMouseEventListeners();
+
+        if (!isMounted) {
+          return;
+        }
+        setIsWebgazerReady(true);
+        setStatus("Ready to start Level 1.");
+      } catch (error) {
+        console.error("Failed to initialize webgazer", error);
+        setStatus("Unable to start eye tracking.");
+      }
+    };
+
+    setupWebgazer();
+
+    return () => {
+      isMounted = false;
+      if (animationRef.current) {
+        window.cancelAnimationFrame(animationRef.current);
+      }
+      if (webgazerRef.current) {
+        webgazerRef.current.end();
+      }
+    };
+  }, []);
+
+  const resetScoring = () => {
+    sampleCountRef.current = 0;
+    totalDistanceRef.current = 0;
+  };
+
+  const computeTarget = (phase: ExercisePhase, elapsedMs: number) => {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    const travelX = width - DOT_RADIUS * 2;
+    const travelY = height - DOT_RADIUS * 2;
+    const t = (elapsedMs % phase.durationMs) / phase.durationMs;
+    const eased = 0.5 - Math.cos(t * Math.PI * 2) / 2;
+
+    switch (phase.id) {
+      case "horizontal":
+        return {
+          x: DOT_RADIUS + travelX * eased,
+          y: height * 0.5,
+        };
+      case "vertical":
+        return {
+          x: width * 0.5,
+          y: DOT_RADIUS + travelY * eased,
+        };
+      case "circle": {
+        const radius = Math.min(travelX, travelY) * 0.35;
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const angle = t * Math.PI * 2;
+        return {
+          x: centerX + Math.cos(angle) * radius,
+          y: centerY + Math.sin(angle) * radius,
+        };
+      }
+      default:
+        return { x: width / 2, y: height / 2 };
+    }
+  };
+
+  const updateScore = (currentTarget: GazePoint) => {
+    if (!smoothedGazePoint) {
+      return;
+    }
+    const dx = smoothedGazePoint.x - currentTarget.x;
+    const dy = smoothedGazePoint.y - currentTarget.y;
+    const distance = Math.hypot(dx, dy);
+
+    sampleCountRef.current += 1;
+    totalDistanceRef.current += distance;
+  };
+
+  const finishRun = () => {
+    const total = sampleCountRef.current || 1;
+    const avgDistance = totalDistanceRef.current / total;
+    const halfWindowHeight = window.innerHeight / 2;
+    const rawAccuracy = 100 - (avgDistance / halfWindowHeight) * 100;
+    const accuracyScore = Math.max(0, Math.round(rawAccuracy));
+
+    setScore(accuracyScore);
+    setStatus(`Accuracy ${accuracyScore}%`);
+    setIsRunning(false);
+  };
+
+  const startRun = () => {
+    setScore(null);
+    setPhaseIndex(0);
+    setIsRunning(true);
+    setStatus(`Running • ${PHASES[0].label}`);
+    resetScoring();
+    startTimeRef.current = performance.now();
+  };
+
+  useEffect(() => {
+    if (!isRunning || !currentPhase) {
+      return;
+    }
+
+    const startTime = startTimeRef.current ?? performance.now();
+
+    const tick = (timestamp: number) => {
+      if (!isRunning || !currentPhase) {
+        return;
+      }
+      const elapsed = timestamp - startTime;
+      const target = computeTarget(currentPhase, elapsed);
+      setTargetPoint(target);
+      updateScore(target);
+
+      if (elapsed >= currentPhase.durationMs) {
+        if (phaseIndex < PHASES.length - 1) {
+          const nextIndex = phaseIndex + 1;
+          setPhaseIndex(nextIndex);
+          setStatus(`Running • ${PHASES[nextIndex].label}`);
+          startTimeRef.current = timestamp;
+        } else {
+          finishRun();
+          return;
+        }
+      }
+
+      animationRef.current = window.requestAnimationFrame(tick);
+    };
+
+    animationRef.current = window.requestAnimationFrame(tick);
+
+    return () => {
+      if (animationRef.current) {
+        window.cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [currentPhase, isRunning, phaseIndex, smoothedGazePoint]);
+
+  return (
+    <div className="min-h-screen bg-zinc-950 text-white">
+      <main className="mx-auto flex min-h-screen w-full max-w-4xl flex-col gap-6 px-6 py-12 text-left">
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-semibold tracking-tight">
+              Level 1: Visual Tracking
+            </h1>
+            <p className="text-sm text-zinc-300">
+              Follow the moving dot through three paths. Your score is based on
+              how often you stay near the dot and how closely you keep up.
+            </p>
+          </div>
+          <Link
+            className="rounded-full border border-zinc-600 px-5 py-2 text-sm font-semibold text-white"
+            href="/exercises"
+          >
+            Back to exercises
+          </Link>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3">
+          <span className="w-fit rounded-full bg-zinc-800 px-4 py-2 text-sm text-zinc-200">
+            {status}
+          </span>
+          <span className="text-sm text-zinc-300">{progressLabel}</span>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            className="rounded-full bg-emerald-500 px-5 py-2 text-sm font-semibold text-black"
+            onClick={startRun}
+            disabled={!isWebgazerReady || isRunning}
+          >
+            {isRunning ? "Running..." : "Start exercise"}
+          </button>
+          {score !== null && (
+            <span className="text-sm text-emerald-200">
+              Latest score: {score}%
+            </span>
+          )}
+        </div>
+
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-900/50 p-4 text-sm text-zinc-300">
+          <p className="font-semibold text-white">How scoring works</p>
+          <p>
+            We sample your gaze while the dot moves. Score combines the
+            percentage of samples near the dot with a pace score based on
+            average distance. Future updates will let the backend set speed and
+            receive detailed accuracy data.
+          </p>
+        </div>
+      </main>
+
+      {isRunning && targetPoint && (
+        <div
+          className="pointer-events-none fixed h-6 w-6 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-400 shadow-[0_0_16px_rgba(251,191,36,0.9)]"
+          style={clampToViewport(targetPoint)}
+          aria-hidden="true"
+        />
+      )}
+
+      {smoothedGazePoint && (
+        <div
+          className="pointer-events-none fixed h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-400/90 shadow-[0_0_10px_rgba(52,211,153,0.7)]"
+          style={clampToViewport(smoothedGazePoint)}
+          aria-hidden="true"
+        />
+      )}
+    </div>
+  );
+}
