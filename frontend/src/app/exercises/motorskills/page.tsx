@@ -15,6 +15,8 @@ export default function PhysicalDevice() {
 	const hitPointsRef = useRef<THREE.Vector3[]>([]);
 	const targetSize = 2;
 
+	const [score, setScore] = useState(0);
+
 	const { onClick, device } = useRequestDevice({
 		filters: [{ namePrefix: "BIODYN" }],
 		optionalServices: [0x1432],
@@ -67,7 +69,11 @@ export default function PhysicalDevice() {
 					/>
 					<ambientLight intensity={0.5} />
 					<directionalLight position={[5, 5, 5]} intensity={1} />
-					<LaserScene quatRef={quatRef} wallRef={wallRef} hitPointsRef={hitPointsRef} targetSize={targetSize} />
+					<LaserScene
+						quatRef={quatRef}
+						wallRef={wallRef}
+						hitPointsRef={hitPointsRef}
+						targetSize={targetSize} />
 					<OrbitControls />
 					<mesh ref={wallRef} rotation={[0.0, 0.0, 0]}>
 						<boxGeometry args={[-30, 30, 30]} />
@@ -76,6 +82,7 @@ export default function PhysicalDevice() {
 				</Canvas>
 			</div>
 
+			{/* TODO: ERIC PLS */}
 			<div className="absolute left-5 top-5 z-20 flex items-center gap-3">
 				<Link
 					className="rounded-full border border-zinc-600 px-5 py-2 text-sm font-semibold text-white"
@@ -101,12 +108,16 @@ function LaserScene({
 	quatRef,
 	wallRef,
 	hitPointsRef,
-	targetSize
+	targetSize,
+	score,
+	setScore,
 }: {
 	quatRef: React.MutableRefObject<[number, number, number, number]>;
 	wallRef: React.RefObject<THREE.Mesh>;
 	hitPointsRef: React.RefObject<THREE.Vector3[]>;
-	targetSize: number
+	targetSize: number,
+	score: number,
+	setScore: (x: number) => void,
 }) {
 	const meshRef = useRef<THREE.Mesh>(null!);
 	const lineRef = useRef<THREE.Line>(null!);
@@ -142,6 +153,7 @@ function LaserScene({
 			const pca = new PCA(points3D);
 			const ev = pca.getExplainedVariance();
 			const linearity = ev[0] / (ev[0] + ev[1] + ev[2]);
+			setScore(score + linearity);
 			// TODO: Collect linearity
 		}
 
