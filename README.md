@@ -22,6 +22,17 @@ Frontend
 - `npm i`
 - `npm run dev`
 
-Backend
+## Tech Stack
+
+Frontend (TypeScript)
+- Next.js
+- React
+- Web Bluetooth
+- Web Viewer
+- Three.js
+
+Backend (Python)
 - Deployed on Railway
 - Run with Uvicorn
+- OpenAI
+- FastAPI
