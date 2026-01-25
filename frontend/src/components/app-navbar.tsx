@@ -51,7 +51,7 @@ export default function AppNavbar() {
         <div className="flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group">
             <span className="text-lg font-semibold text-white">
-              Gregor
+              TBI Motor
             </span>
             <span className="hidden sm:inline-flex text-[0.6rem] uppercase tracking-[0.2em] text-gray-500">
               Recovery
