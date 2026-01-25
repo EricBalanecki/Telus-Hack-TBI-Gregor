@@ -23,13 +23,31 @@
       "exercise": "Level 1: Visual Tracking",
       "score": 70,
       "notes": ""
+    },
+    {
+      "date": "2026-01-25T07:40:33.000Z",
+      "exercise": "Level 1: Visual Tracking",
+      "score": 55,
+      "notes": ""
+    },
+    {
+      "date": "2026-01-25T07:54:06.910Z",
+      "exercise": "Level 2: Direction & Accuracy",
+      "score": 25,
+      "notes": ""
+    },
+    {
+      "date": "2026-01-25T10:29:53.798Z",
+      "exercise": "Level 1: Visual Tracking",
+      "score": 0,
+      "notes": ""
     }
   ],
   "plan": [
     {
       "exercise": "Level 1 \u2013 Basic Visual Tracking",
       "description": "Early rehab, low fatigue. Includes: 1. Follow the Dot (horizontal): dot moves left \u2192 right slowly, user follows with eyes, score = % time on target; 2. Follow the Dot (vertical): up \u2192 down movement, same scoring; 3. Circle Path: dot moves in a circle to train smooth pursuit. Purpose: rebuilds eye movement control, very low cognitive load.",
-      "dot_size": 2,
+      "dot_size": 3,
       "speed": 1,
       "rest_time": 25,
       "target_size": null,
@@ -42,8 +60,8 @@
       "dot_size": null,
       "speed": null,
       "rest_time": null,
-      "target_size": 2,
-      "num_targets": 10,
+      "target_size": 3,
+      "num_targets": 5,
       "days": 4
     },
     {
@@ -54,17 +72,17 @@
       "rest_time": 20,
       "target_size": null,
       "num_targets": null,
-      "days": 4
+      "days": 5
     },
     {
       "exercise": "Level 3 \u2013 Distractors & Control",
       "description": "Trains selective attention and visual filtering. Includes: 1. Follow the Red Dot: multiple dots move, follow only the red one; 2. Stay on Target: target stays still while distractors move, user keeps gaze on center target. Purpose: improves stability and focus.",
-      "dot_size": 1,
+      "dot_size": 2,
       "speed": 2,
       "rest_time": 15,
       "target_size": null,
       "num_targets": null,
-      "days": 5
+      "days": 4
     },
     {
       "exercise": "Level 4 \u2013 Eye + Reaction",
@@ -106,5 +124,10 @@
       "num_targets": null,
       "days": 7
     }
-  ]
+  ],
+  "plan_completions": {
+    "week-1-day-1": true,
+    "week-1-day-2": true,
+    "week-1-day-3": true
+  }
 }

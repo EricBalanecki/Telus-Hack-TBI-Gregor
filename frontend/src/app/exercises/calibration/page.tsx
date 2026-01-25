@@ -157,8 +157,9 @@ function calculateAverage(precisionPercentages: number[]) {
 export default function CalibrationPage() {
   const [status, setStatus] = useState("Initializing eye tracker...");
   const [isWebgazerReady, setIsWebgazerReady] = useState(false);
-  const [smoothedGazePoint, setSmoothedGazePoint] =
-    useState<GazePoint | null>(null);
+  const [smoothedGazePoint, setSmoothedGazePoint] = useState<GazePoint | null>(
+    null,
+  );
   const [hasSavedCalibration, setHasSavedCalibration] = useState(false);
   const [calibrationCounts, setCalibrationCounts] = useState<
     Record<string, number>
@@ -180,8 +181,7 @@ export default function CalibrationPage() {
     () => getCalibrationPointsForRound(calibrationRound),
     [calibrationRound],
   );
-  const showMiddlePoint =
-    pointCalibrate >= calibrationBasePoints.length - 1;
+  const showMiddlePoint = pointCalibrate >= calibrationBasePoints.length - 1;
   const centerPoint = calibrationBasePoints.find(
     (point) => point.id === "middle-center",
   );
@@ -413,12 +413,10 @@ export default function CalibrationPage() {
         aria-hidden="true"
       />
       <main className="flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center">
-        <h1 className="text-3xl font-semibold tracking-tight">
-          Calibration
-        </h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Calibration</h1>
         <p className="max-w-xl text-base text-zinc-300">
-          Calibration is the only place to improve accuracy. Click each point
-          5 times. The sequence repeats 3 rounds, moving closer to the corners.
+          Calibration is the only place to improve accuracy. Click each point 5
+          times. The sequence repeats 3 rounds, moving closer to the corners.
         </p>
         <span className="rounded-full bg-zinc-800 px-4 py-2 text-sm text-zinc-200">
           {status}
@@ -457,7 +455,10 @@ export default function CalibrationPage() {
       </main>
 
       {isCalibrationVisible && calibrationPoints.length > 0 && (
-        <div className="fixed inset-0 z-20">
+        <div
+          className="fixed inset-0"
+          style={{ zIndex: 2147483647 }}
+        >
           {calibrationPoints.map((point) => {
             if (point.id === "middle-center" && !showMiddlePoint) {
               return null;
@@ -476,6 +477,7 @@ export default function CalibrationPage() {
                   top: point.top,
                   backgroundColor: isComplete ? "yellow" : "red",
                   opacity,
+                  zIndex: 2147483647,
                 }}
                 onClick={() =>
                   handlePointClick(point.id, point.left, point.top)
@@ -489,7 +491,10 @@ export default function CalibrationPage() {
       )}
 
       {isAccuracyStage && centerPoint && (
-        <div className="fixed inset-0 z-20 flex items-center justify-center bg-black/60">
+        <div
+          className="fixed inset-0 flex items-center justify-center bg-black"
+          style={{ zIndex: 2147483647 }}
+        >
           <div className="fixed left-1/2 top-8 -translate-x-1/2 rounded-full bg-zinc-900/90 px-4 py-2 text-xs text-zinc-200">
             Please stare at the center dot for 5 seconds.
           </div>
@@ -498,6 +503,7 @@ export default function CalibrationPage() {
             style={{
               left: Math.round(centerPoint.x * window.innerWidth),
               top: Math.round(centerPoint.y * window.innerHeight),
+              zIndex: 2147483647,
             }}
           />
         </div>
@@ -506,7 +512,10 @@ export default function CalibrationPage() {
       {isImproveMode && smoothedGazePoint && (
         <div
           className="pointer-events-none fixed h-4 w-4 -translate-x-1/2 -translate-y-1/2 rounded-full bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,0.8)]"
-          style={clampToViewport(smoothedGazePoint)}
+          style={{
+            ...clampToViewport(smoothedGazePoint),
+            zIndex: 2147483647,
+          }}
           aria-hidden="true"
         />
       )}

@@ -13,6 +13,7 @@ type AppShellProps = {
 export default function AppShell({ children }: AppShellProps) {
   const pathname = usePathname();
   const showNavbar = !pathname.startsWith("/exercises/");
+  const isCalibration = pathname === "/exercises/calibration";
 
   return (
     <div
@@ -28,7 +29,11 @@ export default function AppShell({ children }: AppShellProps) {
         </>
       )}
       {showNavbar && <AppNavbar />}
-      <main className={`relative z-10 ${showNavbar ? "pt-20" : ""}`}>
+      <main
+        className={`relative ${isCalibration ? "z-[1000]" : "z-10"} ${
+          showNavbar ? "pt-20" : ""
+        }`}
+      >
         {children}
       </main>
       <HeartRateOverlay />

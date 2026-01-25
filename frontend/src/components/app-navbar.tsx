@@ -45,7 +45,7 @@ export default function AppNavbar() {
       className={`fixed left-0 right-0 top-0 z-50 transition-all duration-300 ${
         isScrolled || isMenuOpen
           ? "bg-[#0a0a0f]/90 backdrop-blur-xl border-b border-white/5"
-          : "bg-transparent"
+          : "bg-[#0a0a0f]"
       }`}
     >
       <nav className="container mx-auto px-4 py-4">
