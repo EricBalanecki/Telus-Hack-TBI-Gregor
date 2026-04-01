@@ -387,7 +387,7 @@ export default function HeartRateOverlay({
         </div>
       )}
 
-      <div className="fixed right-4 top-4 z-50 rounded-2xl border border-zinc-800 bg-zinc-950/80 px-4 py-3 text-sm text-white shadow-lg backdrop-blur pointer-events-none">
+      <div className="fixed right-4 top-20 z-50 rounded-2xl border border-zinc-800 bg-zinc-950/80 px-4 py-3 text-sm text-white shadow-lg backdrop-blur pointer-events-none">
         <div className="text-xs uppercase tracking-[0.2em] text-zinc-400">
           Heart Rate
         </div>
