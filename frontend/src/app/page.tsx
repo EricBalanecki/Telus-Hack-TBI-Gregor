@@ -58,14 +58,18 @@ export default function Home() {
   const sampleProgress: LineChartPoint[] = [
     { label: "Day 1", value: 62 },
     { label: "Day 3", value: 68 },
-    { label: "Day 5", value: 74 },
-    { label: "Day 7", value: 79 },
+    { label: "Day 5", value: 63 },
+    { label: "Day 7", value: 74 },
+    { label: "Day 9", value: 71 },
+    { label: "Day 11", value: 79 },
   ];
   const sampleAccuracy: LineChartPoint[] = [
     { label: "Day 1", value: 58 },
     { label: "Day 3", value: 66 },
-    { label: "Day 5", value: 72 },
-    { label: "Day 7", value: 78 },
+    { label: "Day 5", value: 61 },
+    { label: "Day 7", value: 72 },
+    { label: "Day 9", value: 69 },
+    { label: "Day 11", value: 78 },
   ];
 
   const progressData = useMemo(() => {
