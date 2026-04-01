@@ -5,7 +5,9 @@ export type RecordEntry = {
   notes: string;
 };
 
-const RECORDS_ENDPOINT = "http://localhost:8000/records";
+import { withApiBase } from "@/api/base";
+
+const RECORDS_ENDPOINT = withApiBase("/records");
 
 export const fetchRecords = async (): Promise<RecordEntry[]> => {
   const response = await fetch(RECORDS_ENDPOINT);

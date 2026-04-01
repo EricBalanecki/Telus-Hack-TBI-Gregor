@@ -135,13 +135,13 @@ export default function ExercisesPage() {
         <p className="text-base text-zinc-300">Follow the exercises below.</p>
         <div className="flex flex-wrap items-center gap-3">
           <Link
-            className="rounded-full border border-zinc-600 px-5 py-2 text-sm font-semibold text-white"
+            className="rounded-md border border-zinc-600 px-5 py-2 text-sm font-semibold text-white"
             href="/"
           >
             Back to home
           </Link>
           <Link
-            className="rounded-full bg-emerald-500 px-5 py-2 text-sm font-semibold text-black"
+            className="rounded-md bg-emerald-500 px-5 py-2 text-sm font-semibold text-black"
             href="/exercises/calibration"
           >
             Calibrate eye tracking
@@ -151,7 +151,7 @@ export default function ExercisesPage() {
           <div>
             <div className="flex flex-wrap items-center gap-2">
               <button
-                className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                className={`rounded-md px-4 py-2 text-sm font-semibold transition ${
                   activeTab === "visual"
                     ? "bg-emerald-500 text-black"
                     : "border border-zinc-700 text-zinc-200 hover:border-emerald-400/60"
@@ -162,7 +162,7 @@ export default function ExercisesPage() {
                 Visual Exercises
               </button>
               <button
-                className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                className={`rounded-md px-4 py-2 text-sm font-semibold transition ${
                   activeTab === "motor"
                     ? "bg-emerald-500 text-black"
                     : "border border-zinc-700 text-zinc-200 hover:border-emerald-400/60"
@@ -196,7 +196,7 @@ export default function ExercisesPage() {
                           {exercise.title}
                         </CardTitle>
                         <span
-                          className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                          className={`rounded-md px-3 py-1 text-xs font-semibold ${
                             exercise.difficulty === "Medium"
                               ? "bg-orange-400/20 text-orange-200"
                               : exercise.difficulty === "Hard"
@@ -209,14 +209,14 @@ export default function ExercisesPage() {
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      <div className="relative h-36 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950/50">
+                      <div className="relative h-36 overflow-hidden rounded-md border border-zinc-800 bg-zinc-950/50">
                         {exercise.imageSrc ? (
                         <Image
                           src={exercise.imageSrc}
                           alt={exercise.imageLabel}
                           fill
                           sizes="(max-width: 768px) 100vw, 50vw"
-                          className={`object-cover object-top ${exercise.imagePosition ?? ""}`}
+                          className="object-cover object-top"
                         />
                         ) : (
                           <div className="flex h-full w-full items-center justify-center text-xs text-zinc-500">
@@ -272,7 +272,7 @@ export default function ExercisesPage() {
                           {exercise.title}
                         </CardTitle>
                         <span
-                          className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                          className={`rounded-md px-3 py-1 text-xs font-semibold ${
                             exercise.difficulty === "Medium"
                               ? "bg-orange-400/20 text-orange-200"
                               : exercise.difficulty === "Hard"
@@ -285,7 +285,7 @@ export default function ExercisesPage() {
                       </div>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                      <div className="relative h-36 overflow-hidden rounded-lg border border-zinc-800 bg-zinc-950/50">
+                      <div className="relative h-36 overflow-hidden rounded-md border border-zinc-800 bg-zinc-950/50">
                         <div className="flex h-full w-full items-center justify-center text-xs text-zinc-500">
                         {exercise.imageSrc ? (
                         <Image
@@ -293,7 +293,7 @@ export default function ExercisesPage() {
                           alt={exercise.imageLabel}
                           fill
                           sizes="(max-width: 768px) 100vw, 50vw"
-                          className={`object-cover object-top ${exercise.imagePosition ?? ""}`}
+                          className="object-cover object-top"
                         />
                         ) : (
                           <div className="flex h-full w-full items-center justify-center text-xs text-zinc-500">

@@ -1,3 +1,4 @@
+import os
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -18,10 +19,17 @@ import json
 
 app = FastAPI()
 
+allowed_origins = os.getenv("ALLOWED_ORIGINS")
+origins = (
+    [origin.strip() for origin in allowed_origins.split(",")]
+    if allowed_origins
+    else ["http://localhost:3000"]
+)
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
-    allow_credentials=True,
+    allow_origins=origins if origins else ["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )

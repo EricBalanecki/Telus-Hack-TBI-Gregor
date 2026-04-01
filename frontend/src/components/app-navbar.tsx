@@ -64,7 +64,7 @@ export default function AppNavbar() {
               <Link
                 key={link.path}
                 href={link.path}
-                className={`relative px-4 py-2 rounded-full text-sm transition-all duration-200 ${
+                className={`relative px-4 py-2 rounded-md text-sm transition-all duration-200 ${
                   isActive(link.path)
                     ? "text-[#00ffcc] bg-[#00ffcc]/10"
                     : "text-gray-400 hover:text-white hover:bg-white/5"
@@ -72,7 +72,7 @@ export default function AppNavbar() {
               >
                 {link.label}
                 {link.badge && (
-                  <span className="absolute -top-1 -right-1 px-1.5 py-0.5 text-[0.6rem] font-bold uppercase tracking-wider bg-[#00ffcc] text-black rounded-full">
+                  <span className="absolute -top-1 -right-1 px-1.5 py-0.5 text-[0.6rem] font-bold uppercase tracking-wider bg-[#00ffcc] text-black rounded-md">
                     {link.badge}
                   </span>
                 )}
@@ -81,7 +81,7 @@ export default function AppNavbar() {
           </div>
 
           <button
-            className="md:hidden p-2 rounded-full border border-white/10 bg-white/5 transition-colors hover:bg-white/10"
+            className="md:hidden p-2 rounded-md border border-white/10 bg-white/5 transition-colors hover:bg-white/10"
             onClick={() => setIsMenuOpen((prev) => !prev)}
             aria-label="Toggle navigation"
           >
@@ -103,7 +103,7 @@ export default function AppNavbar() {
               >
                 {link.label}
                 {link.badge && (
-                  <span className="px-1.5 py-0.5 text-[0.6rem] font-bold uppercase tracking-wider bg-[#00ffcc] text-black rounded-full">
+                  <span className="px-1.5 py-0.5 text-[0.6rem] font-bold uppercase tracking-wider bg-[#00ffcc] text-black rounded-md">
                     {link.badge}
                   </span>
                 )}

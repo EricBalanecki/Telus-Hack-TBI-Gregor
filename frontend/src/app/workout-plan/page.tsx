@@ -141,7 +141,7 @@ export default function WorkoutPlanPage() {
     <button
       key={option.value}
       type="button"
-      className={`rounded-full border px-4 py-2 text-sm transition ${
+      className={`rounded-md border px-4 py-2 text-sm transition ${
         selected === option.value
           ? "border-emerald-400 bg-emerald-500/10 text-emerald-100"
           : "border-zinc-700 text-zinc-300 hover:border-emerald-400/60"
@@ -219,7 +219,7 @@ export default function WorkoutPlanPage() {
             </p>
           </div>
           <Link
-            className="rounded-full border border-zinc-600 px-5 py-2 text-sm font-semibold text-white"
+            className="rounded-md border border-zinc-600 px-5 py-2 text-sm font-semibold text-white"
             href="/"
           >
             Back to home
@@ -438,7 +438,7 @@ export default function WorkoutPlanPage() {
             )}
             <div className="flex justify-end">
               <button
-                className="flex items-center justify-center gap-2 rounded-full bg-emerald-500 px-6 py-2 text-sm font-semibold text-black transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
+                className="flex items-center justify-center gap-2 rounded-md bg-emerald-500 px-6 py-2 text-sm font-semibold text-black transition hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
                 onClick={submit}
                 disabled={isSubmitting}
               >
@@ -459,7 +459,7 @@ export default function WorkoutPlanPage() {
                 </p>
               </div>
               <button
-                className="rounded-full border border-zinc-600 px-4 py-2 text-xs font-semibold text-white hover:border-emerald-400/60 hover:text-emerald-200"
+                className="rounded-md border border-zinc-600 px-4 py-2 text-xs font-semibold text-white hover:border-emerald-400/60 hover:text-emerald-200"
                 type="button"
                 onClick={() => {
                   setPlan(null);
@@ -516,27 +516,27 @@ export default function WorkoutPlanPage() {
                     )}
                     <div className="mt-3 flex flex-wrap gap-2 text-xs text-zinc-300">
                       {item.dot_size != null && (
-                        <span className="rounded-full bg-zinc-800 px-3 py-1">
+                        <span className="rounded-md bg-zinc-800 px-3 py-1">
                           Dot size: {item.dot_size}
                         </span>
                       )}
                       {item.speed != null && (
-                        <span className="rounded-full bg-zinc-800 px-3 py-1">
+                        <span className="rounded-md bg-zinc-800 px-3 py-1">
                           Speed: {item.speed}
                         </span>
                       )}
                       {item.rest_time != null && (
-                        <span className="rounded-full bg-zinc-800 px-3 py-1">
+                        <span className="rounded-md bg-zinc-800 px-3 py-1">
                           Rest: {item.rest_time}s
                         </span>
                       )}
                       {item.target_size != null && (
-                        <span className="rounded-full bg-zinc-800 px-3 py-1">
+                        <span className="rounded-md bg-zinc-800 px-3 py-1">
                           Target size: {item.target_size}
                         </span>
                       )}
                       {item.num_targets != null && (
-                        <span className="rounded-full bg-zinc-800 px-3 py-1">
+                        <span className="rounded-md bg-zinc-800 px-3 py-1">
                           Targets: {item.num_targets}
                         </span>
                       )}
@@ -575,7 +575,7 @@ export default function WorkoutPlanPage() {
                             {exerciseLink && (
                               <Link
                                 href={exerciseLink}
-                                className="rounded-full border border-emerald-400/60 px-3 py-1 text-xs text-emerald-200 hover:border-emerald-300"
+                                className="rounded-md border border-emerald-400/60 px-3 py-1 text-xs text-emerald-200 hover:border-emerald-300"
                               >
                                 Start
                               </Link>

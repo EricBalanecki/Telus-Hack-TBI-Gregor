@@ -16,7 +16,9 @@ export type PlanInput = {
   tired_using_screens: boolean;
 };
 
-const PLAN_ENDPOINT = "http://localhost:8000/plan";
+import { withApiBase } from "@/api/base";
+
+const PLAN_ENDPOINT = withApiBase("/plan");
 
 export const fetchPlan = async (): Promise<PlanItem[]> => {
   const response = await fetch(PLAN_ENDPOINT);

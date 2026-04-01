@@ -81,7 +81,7 @@ export default function CoachPage() {
         <button
           key={prompt}
           type="button"
-          className="rounded-full border border-zinc-700 px-4 py-2 text-xs text-zinc-200 transition hover:border-emerald-400/60 hover:text-emerald-200"
+          className="rounded-md border border-zinc-700 px-4 py-2 text-xs text-zinc-200 transition hover:border-emerald-400/60 hover:text-emerald-200"
           onClick={() => setInput(prompt)}
         >
           {prompt}
@@ -119,7 +119,7 @@ export default function CoachPage() {
                 Coach Gregor
               </div>
               <button
-                className="rounded-full border border-zinc-700 p-2 text-zinc-200 hover:border-emerald-400/60 hover:text-emerald-200"
+                className="rounded-md border border-zinc-700 p-2 text-zinc-200 hover:border-emerald-400/60 hover:text-emerald-200"
                 onClick={handleClose}
                 type="button"
               >
@@ -177,7 +177,7 @@ export default function CoachPage() {
 
             <div className="flex items-center gap-2 border-t border-zinc-800 px-4 py-3">
               <input
-                className="flex-1 rounded-full border border-zinc-700 bg-zinc-950 px-4 py-2 text-sm text-white outline-none placeholder:text-zinc-500 focus:border-emerald-400/60"
+                className="flex-1 rounded-md border border-zinc-700 bg-zinc-950 px-4 py-2 text-sm text-white outline-none placeholder:text-zinc-500 focus:border-emerald-400/60"
                 placeholder="Ask about progress or motor control..."
                 value={input}
                 onChange={(event) => setInput(event.target.value)}
@@ -188,7 +188,7 @@ export default function CoachPage() {
                 }}
               />
               <button
-                className="rounded-full border border-emerald-400/60 px-3 py-2 text-emerald-200 transition hover:bg-emerald-500/10"
+                className="rounded-md border border-emerald-400/60 px-3 py-2 text-emerald-200 transition hover:bg-emerald-500/10"
                 onClick={handleSend}
                 disabled={isSending}
                 type="button"

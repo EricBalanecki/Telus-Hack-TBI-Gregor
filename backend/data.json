@@ -41,6 +41,42 @@
       "exercise": "Level 1: Visual Tracking",
       "score": 0,
       "notes": ""
+    },
+    {
+      "date": "2026-01-26T03:32:10.580Z",
+      "exercise": "Level 1: Visual Tracking",
+      "score": 16,
+      "notes": ""
+    },
+    {
+      "date": "2026-01-26T03:34:58.107Z",
+      "exercise": "Level 2: Direction & Accuracy",
+      "score": 29,
+      "notes": ""
+    },
+    {
+      "date": "2026-01-26T03:36:00.616Z",
+      "exercise": "Level 2: Direction & Accuracy",
+      "score": 28,
+      "notes": ""
+    },
+    {
+      "date": "2026-01-26T03:44:39.205Z",
+      "exercise": "Level 1: Visual Tracking",
+      "score": 0,
+      "notes": ""
+    },
+    {
+      "date": "2026-01-26T23:57:03.832Z",
+      "exercise": "Level 1: Visual Tracking",
+      "score": 70,
+      "notes": ""
+    },
+    {
+      "date": "2026-01-26T23:58:11.835Z",
+      "exercise": "Level 2: Direction & Accuracy",
+      "score": 28,
+      "notes": ""
     }
   ],
   "plan": [
@@ -128,6 +164,7 @@
   "plan_completions": {
     "week-1-day-1": true,
     "week-1-day-2": true,
-    "week-1-day-3": true
+    "week-1-day-3": true,
+    "week-4-day-1": false
   }
 }

@@ -13,7 +13,7 @@ export default function WorkoutPlanResultPage() {
           We will generate a personalized plan here next.
         </p>
         <Link
-          className="rounded-full border border-zinc-600 px-5 py-2 text-sm font-semibold text-white"
+          className="rounded-md border border-zinc-600 px-5 py-2 text-sm font-semibold text-white"
           href="/workout-plan"
         >
           Back to survey

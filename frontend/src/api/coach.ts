@@ -7,7 +7,9 @@ type CoachResponse = {
   reply?: string;
 };
 
-const COACH_ENDPOINT = "http://localhost:8000/coach";
+import { withApiBase } from "@/api/base";
+
+const COACH_ENDPOINT = withApiBase("/coach");
 
 export const sendCoachMessage = async (
   messages: CoachMessage[],

@@ -418,19 +418,19 @@ export default function CalibrationPage() {
           Calibration is the only place to improve accuracy. Click each point 5
           times. The sequence repeats 3 rounds, moving closer to the corners.
         </p>
-        <span className="rounded-full bg-zinc-800 px-4 py-2 text-sm text-zinc-200">
+        <span className="rounded-md bg-zinc-800 px-4 py-2 text-sm text-zinc-200">
           {status}
         </span>
         <div className="flex items-center gap-3">
           <Link
-            className="rounded-full border border-zinc-600 px-5 py-2 text-sm font-semibold text-white"
+            className="rounded-md border border-zinc-600 px-5 py-2 text-sm font-semibold text-white"
             href="/exercises"
           >
             Back to exercises
           </Link>
           {isWebgazerReady && (
             <button
-              className="rounded-full bg-emerald-500 px-5 py-2 text-sm font-semibold text-black"
+              className="rounded-md bg-emerald-500 px-5 py-2 text-sm font-semibold text-black"
               onClick={startCalibration}
             >
               {hasSavedCalibration
@@ -440,7 +440,7 @@ export default function CalibrationPage() {
           )}
           {isWebgazerReady && (
             <button
-              className="rounded-full border border-zinc-600 px-5 py-2 text-sm font-semibold text-white"
+              className="rounded-md border border-zinc-600 px-5 py-2 text-sm font-semibold text-white"
               onClick={startImproveMode}
             >
               Improve by clicking
@@ -495,7 +495,7 @@ export default function CalibrationPage() {
           className="fixed inset-0 flex items-center justify-center bg-black"
           style={{ zIndex: 2147483647 }}
         >
-          <div className="fixed left-1/2 top-8 -translate-x-1/2 rounded-full bg-zinc-900/90 px-4 py-2 text-xs text-zinc-200">
+          <div className="fixed left-1/2 top-8 -translate-x-1/2 rounded-md bg-zinc-900/90 px-4 py-2 text-xs text-zinc-200">
             Please stare at the center dot for 5 seconds.
           </div>
           <div

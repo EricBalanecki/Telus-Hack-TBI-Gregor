@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { createRecord, getLatestScore } from "@/api/records";
 import { Slider } from "@/components/ui/slider";
 
@@ -67,7 +67,7 @@ const clampToViewport = (point: GazePoint, radius: number) => {
   };
 };
 
-export default function LevelOneVisualTracking() {
+function LevelOneVisualTrackingInner() {
   const [smoothedGazePoint, setSmoothedGazePoint] =
     useState<GazePoint | null>(null);
   const [isWebgazerReady, setIsWebgazerReady] = useState(false);
@@ -380,7 +380,7 @@ export default function LevelOneVisualTracking() {
               </p>
             </div>
             <Link
-              className="rounded-full border border-zinc-600 px-3 py-1 text-xs font-semibold text-white"
+              className="rounded-md border border-zinc-600 px-3 py-1 text-xs font-semibold text-white"
               href={backHref}
             >
               Back
@@ -388,7 +388,7 @@ export default function LevelOneVisualTracking() {
           </div>
 
           <div className="mt-3 flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-zinc-800 px-3 py-1 text-xs text-zinc-200">
+            <span className="rounded-md bg-zinc-800 px-3 py-1 text-xs text-zinc-200">
               {status}
             </span>
             <span className="text-xs text-zinc-400">{progressLabel}</span>
@@ -396,7 +396,7 @@ export default function LevelOneVisualTracking() {
 
           <div className="mt-3 flex flex-wrap items-center gap-2">
             <button
-              className="rounded-full bg-emerald-500 px-4 py-1.5 text-xs font-semibold text-black"
+              className="rounded-md bg-emerald-500 px-4 py-1.5 text-xs font-semibold text-black"
               onClick={startRun}
               disabled={!isWebgazerReady || isRunning}
             >
@@ -497,5 +497,13 @@ export default function LevelOneVisualTracking() {
         />
       )}
     </div>
+  );
+}
+
+export default function LevelOneVisualTrackingPage() {
+  return (
+    <Suspense fallback={null}>
+      <LevelOneVisualTrackingInner />
+    </Suspense>
   );
 }

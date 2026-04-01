@@ -2,16 +2,15 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { TransformControls, OrbitControls, Sphere, useGLTF, PerspectiveCamera } from "@react-three/drei";
 import { useRequestDevice } from "react-web-bluetooth";
-import { BluetoothRemoteGATTCharacteristic } from "web-bluetooth";
 import * as THREE from "three";
 import { PCA } from "ml-pca";
 import { createRecord } from "@/api/records";
 
-export default function PhysicalDevice() {
+function PhysicalDeviceInner() {
 	const quatRef = useRef<[number, number, number, number]>([0, 0, 0, 1]);
 	const wallRef = useRef<THREE.Mesh>(null!);
 	const hitPointsRef = useRef<THREE.Vector3[]>([]);
@@ -138,7 +137,7 @@ export default function PhysicalDevice() {
 								</p>
 							</div>
 							<Link
-								className="rounded-full border border-zinc-600 px-3 py-1 text-xs font-semibold text-white"
+								className="rounded-md border border-zinc-600 px-3 py-1 text-xs font-semibold text-white"
 								href={backHref}
 							>
 								Back
@@ -146,7 +145,7 @@ export default function PhysicalDevice() {
 						</div>
 
 						<div className="mt-3 flex flex-wrap items-center gap-2">
-							<span className="rounded-full bg-zinc-800 px-3 py-1 text-xs text-zinc-200">
+							<span className="rounded-md bg-zinc-800 px-3 py-1 text-xs text-zinc-200">
 								Targets: {targetsHitTarget}
 							</span>
 						</div>
@@ -159,7 +158,7 @@ export default function PhysicalDevice() {
 							)}
 							<div className="flex flex-wrap items-center gap-2">
 								<button
-									className={`rounded-full px-4 py-1.5 text-xs font-semibold ${device
+									className={`rounded-md px-4 py-1.5 text-xs font-semibold ${device
 										? "bg-emerald-500 text-black"
 										: "border border-zinc-700 text-zinc-500"
 										}`}
@@ -177,7 +176,7 @@ export default function PhysicalDevice() {
 								{!device && (
 									<button
 										onClick={onClick}
-										className="rounded-full border border-zinc-700 px-3 py-1 text-xs text-zinc-100 hover:border-emerald-400 hover:text-emerald-200"
+										className="rounded-md border border-zinc-700 px-3 py-1 text-xs text-zinc-100 hover:border-emerald-400 hover:text-emerald-200"
 										type="button"
 									>
 										Connect
@@ -202,7 +201,7 @@ export default function PhysicalDevice() {
 								</p>
 							</div>
 							<Link
-								className="rounded-full border border-zinc-600 px-3 py-1 text-xs font-semibold text-white"
+								className="rounded-md border border-zinc-600 px-3 py-1 text-xs font-semibold text-white"
 								href={backHref}
 							>
 								Back
@@ -210,11 +209,11 @@ export default function PhysicalDevice() {
 						</div>
 
 						<div className="mt-3 flex flex-wrap items-center gap-2">
-							<span className="rounded-full bg-zinc-800 px-3 py-1 text-xs text-zinc-200">
+							<span className="rounded-md bg-zinc-800 px-3 py-1 text-xs text-zinc-200">
 								Score: {score.toFixed(2)}
 							</span>
 							<button
-								className="rounded-full bg-emerald-500 px-4 py-1.5 text-xs font-semibold text-black"
+								className="rounded-md bg-emerald-500 px-4 py-1.5 text-xs font-semibold text-black"
 								onClick={() => {
 									setScore(0);
 									setTargetsHit(0);
@@ -246,7 +245,7 @@ export default function PhysicalDevice() {
 				</div>
 				<div className="mt-3 flex flex-wrap items-center gap-2">
 					<Link
-						className="rounded-full border border-zinc-700 px-3 py-1 text-xs text-zinc-100 hover:border-emerald-400 hover:text-emerald-200"
+						className="rounded-md border border-zinc-700 px-3 py-1 text-xs text-zinc-100 hover:border-emerald-400 hover:text-emerald-200"
 						href="/exercises"
 					>
 						Back
@@ -254,7 +253,7 @@ export default function PhysicalDevice() {
 					{!device && (
 						<button
 							onClick={onClick}
-							className="rounded-full border border-zinc-700 px-3 py-1 text-xs text-zinc-100 hover:border-emerald-400 hover:text-emerald-200"
+							className="rounded-md border border-zinc-700 px-3 py-1 text-xs text-zinc-100 hover:border-emerald-400 hover:text-emerald-200"
 						>
 							Connect
 						</button>
@@ -263,6 +262,14 @@ export default function PhysicalDevice() {
 			</div>
 		</div>
 	);
+}
+
+export default function PhysicalDevicePage() {
+  return (
+    <Suspense fallback={null}>
+      <PhysicalDeviceInner />
+    </Suspense>
+  );
 }
 
 function LaserScene({
@@ -285,12 +292,12 @@ function LaserScene({
 	setTargetsHit: (x: number) => void,
 }) {
 	const meshRef = useRef<THREE.Mesh>(null!);
-	const lineRef = useRef<THREE.Line>(null!);
+	const lineRef = useRef<any>(null);
 	const hitDotRef = useRef<THREE.Mesh>(null!);
 	const raycaster = new THREE.Raycaster();
 	const dir = new THREE.Vector3();
-	const trailRef = useRef<THREE.Line>(null!);
-	const transformRef = useRef<unknown>(null);
+	const trailRef = useRef<any>(null);
+	const transformRef = useRef<any>(null);
 
 
 	const [targetPosition, setTargetPosition] = useState<THREE.Vector3>(() => new THREE.Vector3());

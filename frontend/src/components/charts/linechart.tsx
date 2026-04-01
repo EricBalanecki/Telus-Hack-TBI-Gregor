@@ -1,6 +1,5 @@
 "use client";
 
-import { TrendingUp } from "lucide-react";
 import {
   CartesianGrid,
   Line,
@@ -100,8 +99,7 @@ export function LineChartCard({
         )}
       </CardContent>
       {trendLabel && (
-        <CardFooter className="flex items-center gap-2 text-xs text-zinc-400">
-          <TrendingUp className="h-4 w-4 text-emerald-300" />
+        <CardFooter className="flex items-center text-xs text-zinc-400">
           {trendLabel}
         </CardFooter>
       )}

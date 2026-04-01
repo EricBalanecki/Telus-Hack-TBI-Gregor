@@ -5,7 +5,9 @@ export type PlanCompletionUpdate = {
   completed: boolean;
 };
 
-const PLAN_COMPLETIONS_ENDPOINT = "http://localhost:8000/plan/completions";
+import { withApiBase } from "@/api/base";
+
+const PLAN_COMPLETIONS_ENDPOINT = withApiBase("/plan/completions");
 
 export const fetchPlanCompletions = async (): Promise<PlanCompletionMap> => {
   const response = await fetch(PLAN_COMPLETIONS_ENDPOINT);
