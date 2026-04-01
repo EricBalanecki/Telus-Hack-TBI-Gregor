@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-	title: "Gregor",
+	title: "TBI Motor Recovery",
 	description: "Traumatic Brain Injury Recovery",
 };
 
