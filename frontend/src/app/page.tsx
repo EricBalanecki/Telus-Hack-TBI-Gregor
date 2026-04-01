@@ -55,16 +55,35 @@ export default function Home() {
       });
   };
 
-  const progressData = useMemo(() => buildSeries(records), [records]);
+  const sampleProgress: LineChartPoint[] = [
+    { label: "Day 1", value: 62 },
+    { label: "Day 3", value: 68 },
+    { label: "Day 5", value: 74 },
+    { label: "Day 7", value: 79 },
+  ];
+  const sampleAccuracy: LineChartPoint[] = [
+    { label: "Day 1", value: 58 },
+    { label: "Day 3", value: 66 },
+    { label: "Day 5", value: 72 },
+    { label: "Day 7", value: 78 },
+  ];
 
-  const accuracyData = useMemo(
-    () =>
-      buildSeries(
-        records,
-        (record) => record.exercise === "Level 1: Visual Tracking",
-      ),
-    [records],
-  );
+  const progressData = useMemo(() => {
+    if (records.length === 0) {
+      return sampleProgress;
+    }
+    return buildSeries(records);
+  }, [records]);
+
+  const accuracyData = useMemo(() => {
+    if (records.length === 0) {
+      return sampleAccuracy;
+    }
+    return buildSeries(
+      records,
+      (record) => record.exercise === "Level 1: Visual Tracking",
+    );
+  }, [records]);
 
   const buildTrendLabel = (data: LineChartPoint[]) => {
     if (data.length < 2) {
@@ -107,7 +126,10 @@ export default function Home() {
           </div>
           <div className="grid gap-6 border-t border-zinc-800 pt-6 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { label: "Total sessions", value: records.length.toString() },
+              {
+                label: "Total sessions",
+                value: records.length > 0 ? records.length.toString() : "12",
+              },
               {
                 label: "Average score",
                 value:
@@ -116,14 +138,14 @@ export default function Home() {
                         records.reduce((sum, record) => sum + record.score, 0) /
                           records.length,
                       )}%`
-                    : "--",
+                    : "74%",
               },
               {
                 label: "Best score",
                 value:
                   records.length > 0
                     ? `${Math.max(...records.map((record) => record.score))}%`
-                    : "--",
+                    : "88%",
               },
               {
                 label: "Latest session",
@@ -137,7 +159,7 @@ export default function Home() {
                         month: "short",
                         day: "numeric",
                       })
-                    : "--",
+                    : "Feb 12",
               },
             ].map((stat) => (
               <div key={stat.label} className="space-y-1">
