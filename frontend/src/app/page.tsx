@@ -201,7 +201,7 @@ export default function Home() {
               }
             />
           </section>
-          <div className="space-y-6 pt-2">
+          <div className="space-y-12 pt-2">
             {[
               {
                 title: "Who it helps",
@@ -227,12 +227,30 @@ export default function Home() {
                 title: "Why it's safe",
                 text: "Live heart rate tracking helps avoid overexertion and encourages timely breaks.",
               },
-            ].map((item) => (
-              <section key={item.title} className="border-t border-zinc-800 pt-6">
-                <div className="text-xs uppercase tracking-[0.2em] text-zinc-500">
-                  {item.title}
-                </div>
-                <p className="mt-2 text-base text-zinc-300">{item.text}</p>
+            ].map((item, index) => (
+              <section
+                key={item.title}
+                className="border-t border-zinc-800 pt-8"
+              >
+                {index % 2 === 1 ? (
+                  <div className="grid gap-6 md:min-h-[180px] md:grid-cols-[1fr_1fr] md:items-center">
+                    <p className="text-base text-zinc-400 md:text-lg">
+                      {item.text}
+                    </p>
+                    <h3 className="text-right text-xl font-semibold text-white md:text-2xl">
+                      {item.title}
+                    </h3>
+                  </div>
+                ) : (
+                  <div className="grid gap-6 md:min-h-[180px] md:grid-cols-[1fr_1fr] md:items-center">
+                    <h3 className="text-xl font-semibold text-white md:text-2xl">
+                      {item.title}
+                    </h3>
+                    <p className="text-base text-zinc-400 md:text-lg">
+                      {item.text}
+                    </p>
+                  </div>
+                )}
               </section>
             ))}
           </div>
