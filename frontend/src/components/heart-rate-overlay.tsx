@@ -387,7 +387,7 @@ export default function HeartRateOverlay({
         </div>
       )}
 
-      <div className="fixed right-4 top-4 z-50 rounded-2xl border border-zinc-800 bg-zinc-950/80 px-4 py-3 text-sm text-white shadow-lg backdrop-blur">
+      <div className="fixed right-4 top-4 z-50 rounded-2xl border border-zinc-800 bg-zinc-950/80 px-4 py-3 text-sm text-white shadow-lg backdrop-blur pointer-events-none">
         <div className="text-xs uppercase tracking-[0.2em] text-zinc-400">
           Heart Rate
         </div>
@@ -397,7 +397,7 @@ export default function HeartRateOverlay({
           </div>
           <div className="flex items-center gap-2">
             <button
-              className="rounded-md border border-zinc-700 px-3 py-1 text-xs text-zinc-100 hover:border-emerald-400 hover:text-emerald-200"
+              className="rounded-md border border-zinc-700 px-3 py-1 text-xs text-zinc-100 hover:border-emerald-400 hover:text-emerald-200 pointer-events-auto"
               onClick={connect}
               type="button"
             >
@@ -418,7 +418,7 @@ export default function HeartRateOverlay({
         )}
         {!isCalibrating && status === "Connected" && (
           <button
-            className="mt-2 w-full rounded-md border border-zinc-700 px-3 py-1 text-xs text-zinc-100 hover:border-emerald-400 hover:text-emerald-200"
+            className="mt-2 w-full rounded-md border border-zinc-700 px-3 py-1 text-xs text-zinc-100 hover:border-emerald-400 hover:text-emerald-200 pointer-events-auto"
             onClick={startCalibration}
             type="button"
           >
